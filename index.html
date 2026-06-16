@@ -1,146 +1,245 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IMC Pro — Avaliação Clínica</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="styles.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>IMC · Calculadora Profissional</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="styles.css"/>
 </head>
 <body>
 
-<div class="app">
+<div class="shell">
 
-  <!-- ── Cabeçalho ── -->
-  <header class="app-header">
-    <div class="app-brand">
-      <div class="brand-dot" aria-hidden="true"></div>
-      <span class="brand-name">IMC Pro · Avaliação Clínica</span>
+  <!-- ══ TOPO ══════════════════════════════════════════════ -->
+  <header class="top">
+    <div class="top-logo">
+      <svg class="top-logo-icon" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect width="28" height="28" rx="7" fill="currentColor" fill-opacity=".12"/>
+        <path d="M9 19 L14 9 L19 19 M11.2 15.5 H16.8" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="top-logo-name">IMC<span class="top-logo-pro"> Pro</span></span>
     </div>
-    <span class="badge-oms">OMS / WHO</span>
+
+    <!-- Toggle de modo -->
+    <div class="mode-toggle" role="group" aria-label="Selecionar perfil">
+      <button class="mode-btn active" id="btn-academia" onclick="setModo('academia')">
+        <svg viewBox="0 0 18 18" fill="none"><path d="M9 2C10.7 2 12 3.3 12 5S10.7 8 9 8 6 6.7 6 5 7.3 2 9 2ZM3 16C3 12.7 5.7 10 9 10S15 12.7 15 16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M5 13L7.5 11L9 13L11 10" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Academia
+      </button>
+      <button class="mode-btn" id="btn-clinico" onclick="setModo('clinico')">
+        <svg viewBox="0 0 18 18" fill="none"><rect x="3" y="3" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M9 6V12M6 9H12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        Clínico
+      </button>
+    </div>
   </header>
 
-  <!-- ── Formulário ── -->
-  <div class="card">
-    <div class="form-card">
+  <!-- ══ HERO ═══════════════════════════════════════════════ -->
+  <section class="hero">
+    <p class="hero-eyebrow" id="hero-eyebrow">Avaliação de Composição Corporal</p>
+    <h1 class="hero-title" id="hero-title">Descubra onde<br/>você está <em>agora.</em></h1>
+    <p class="hero-sub" id="hero-sub">Insira seus dados e receba análise de IMC, metabolismo basal e faixa de peso ideal — calibrada para atletas e praticantes.</p>
+  </section>
 
-      <div class="section-label">Dados antropométricos</div>
+  <!-- ══ FORMULÁRIO ═════════════════════════════════════════ -->
+  <section class="form-section">
+    <div class="form-grid">
 
-      <div class="row-2">
-        <div class="field">
-          <label>Peso</label>
-          <input type="number" id="peso" placeholder="70.0 kg" min="1" max="500" step="0.1" />
-        </div>
-        <div class="field">
-          <label>Altura</label>
-          <input type="number" id="altura" placeholder="170 cm" min="50" max="250" step="1" />
-        </div>
-      </div>
-
-      <div class="row-2">
-        <div class="field">
-          <label>Sexo biológico</label>
-          <div class="toggle-group">
-            <button class="toggle-btn active" id="btn-m" onclick="setSexo('M')">♂ Masc.</button>
-            <button class="toggle-btn"        id="btn-f" onclick="setSexo('F')">♀ Fem.</button>
-          </div>
-        </div>
-        <div class="field">
-          <label>Idade</label>
-          <input type="number" id="idade" placeholder="30 anos" min="2" max="120" step="1" />
+      <div class="field-group">
+        <label class="field-label" for="peso">Peso</label>
+        <div class="field-wrap">
+          <input class="field-input" type="number" id="peso" placeholder="70" min="1" max="500" step="0.1" autocomplete="off"/>
+          <span class="field-unit">kg</span>
         </div>
       </div>
 
-      <p class="error-msg" id="erro">⚠ Preencha todos os campos corretamente.</p>
+      <div class="field-group">
+        <label class="field-label" for="altura">Altura</label>
+        <div class="field-wrap">
+          <input class="field-input" type="number" id="altura" placeholder="170" min="50" max="250" step="1" autocomplete="off"/>
+          <span class="field-unit">cm</span>
+        </div>
+      </div>
 
-      <button class="btn-calc" onclick="calcular()">Calcular IMC</button>
+      <div class="field-group">
+        <label class="field-label">Sexo biológico</label>
+        <div class="sex-toggle">
+          <button class="sex-btn active" id="sbtn-m" onclick="setSexo('M')">Masculino</button>
+          <button class="sex-btn" id="sbtn-f" onclick="setSexo('F')">Feminino</button>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label" for="idade">Idade</label>
+        <div class="field-wrap">
+          <input class="field-input" type="number" id="idade" placeholder="30" min="2" max="120" step="1" autocomplete="off"/>
+          <span class="field-unit">anos</span>
+        </div>
+      </div>
 
     </div>
-  </div>
 
-  <!-- ── Resultado (oculto até calcular) ── -->
-  <div id="resultado">
-
-    <!-- IMC principal -->
-    <div class="card">
-      <div class="imc-card">
-        <div class="imc-top">
-          <div class="imc-score">
-            <span class="imc-num" id="imc-num">--</span>
-            <div class="imc-unit-block">
-              <span class="imc-unit">kg</span>
-              <span class="imc-unit">m²</span>
-            </div>
-          </div>
-          <div class="imc-right">
-            <div class="imc-classification" id="imc-label">--</div>
-            <span class="pill" id="imc-pill">
-              <span class="pill-dot"></span>--
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div class="bar-section">
-        <div class="bar-track">
-          <div class="bar-thumb" id="bar-thumb" style="left:0%"></div>
-        </div>
-        <div class="bar-labels">
-          <span>14</span><span>18,5</span><span>25</span><span>30</span><span>35</span><span>40+</span>
-        </div>
+    <!-- campo extra clínico: nível de atividade (oculto no modo academia) -->
+    <div class="clinico-extra" id="clinico-extra" style="display:none">
+      <label class="field-label">Nível de atividade física</label>
+      <div class="activity-grid">
+        <button class="act-btn active" data-fator="1.2" onclick="setAtividade(this)">Sedentário</button>
+        <button class="act-btn" data-fator="1.375" onclick="setAtividade(this)">Leve<span>1–3×/sem</span></button>
+        <button class="act-btn" data-fator="1.55" onclick="setAtividade(this)">Moderado<span>3–5×/sem</span></button>
+        <button class="act-btn" data-fator="1.725" onclick="setAtividade(this)">Intenso<span>6–7×/sem</span></button>
+        <button class="act-btn" data-fator="1.9" onclick="setAtividade(this)">Atleta<span>2×/dia</span></button>
       </div>
     </div>
 
-    <!-- Métricas -->
-    <div class="metrics-grid">
-      <div class="metric-card">
-        <span class="metric-icon" aria-hidden="true">⚖️</span>
-        <div class="metric-label">Peso ideal</div>
-        <div class="metric-val" id="m-ideal">--</div>
-        <div class="metric-sub">IMC alvo 22,0</div>
+    <p class="error-msg" id="erro" style="display:none">Preencha todos os campos com valores válidos.</p>
+
+    <button class="calc-btn" onclick="calcular()">
+      <span id="calc-btn-label">Calcular IMC</span>
+      <svg viewBox="0 0 20 20" fill="none"><path d="M4 10H16M11 5L16 10L11 15" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </button>
+  </section>
+
+  <!-- ══ RESULTADO ══════════════════════════════════════════ -->
+  <section class="result-section" id="resultado" style="display:none">
+
+    <!-- Score principal -->
+    <div class="score-card">
+      <div class="score-left">
+        <div class="score-label">Seu IMC</div>
+        <div class="score-number" id="res-imc">--</div>
+        <div class="score-unit">kg / m²</div>
       </div>
-      <div class="metric-card">
-        <span class="metric-icon" aria-hidden="true">📏</span>
-        <div class="metric-label">Faixa saudável</div>
-        <div class="metric-val" id="m-faixa">--</div>
-        <div class="metric-sub">18,5 – 24,9 kg/m²</div>
+      <div class="score-right">
+        <div class="score-class" id="res-class">--</div>
+        <div class="score-badge" id="res-badge">-- risco --</div>
+        <div class="score-percentil" id="res-obs"></div>
       </div>
-      <div class="metric-card">
-        <span class="metric-icon" aria-hidden="true">↕️</span>
-        <div class="metric-label">Δ Peso ideal</div>
-        <div class="metric-val" id="m-diff">--</div>
-        <div class="metric-sub">diferença atual</div>
+    </div>
+
+    <!-- Barra visual -->
+    <div class="bar-card">
+      <div class="bar-zones">
+        <span class="bz" style="width:13%">Magreza</span>
+        <span class="bz" style="width:27%">Normal</span>
+        <span class="bz" style="width:17%">Sobrepeso</span>
+        <span class="bz" style="width:17%">Ob. I</span>
+        <span class="bz" style="width:15%">Ob. II</span>
+        <span class="bz" style="width:11%">Ob. III</span>
       </div>
-      <div class="metric-card">
-        <span class="metric-icon" aria-hidden="true">🔥</span>
-        <div class="metric-label">TMB</div>
-        <div class="metric-val" id="m-tmb">--</div>
-        <div class="metric-sub">kcal/dia · repouso</div>
+      <div class="bar-track">
+        <div class="bar-fill"></div>
+        <div class="bar-thumb" id="bar-thumb" style="left:0%">
+          <div class="bar-thumb-tip" id="bar-tip">--</div>
+        </div>
       </div>
+      <div class="bar-ticks">
+        <span>14</span><span>18,5</span><span>25</span><span>30</span><span>35</span><span>40+</span>
+      </div>
+    </div>
+
+    <!-- Métricas: grade de cards -->
+    <div class="metrics-row" id="metrics-row">
+
+      <div class="mcard">
+        <div class="mcard-icon">⚖</div>
+        <div class="mcard-label">Peso ideal</div>
+        <div class="mcard-val" id="m-ideal">--</div>
+        <div class="mcard-sub">IMC alvo 22</div>
+      </div>
+
+      <div class="mcard">
+        <div class="mcard-icon">↕</div>
+        <div class="mcard-label">Faixa saudável</div>
+        <div class="mcard-val" id="m-faixa">--</div>
+        <div class="mcard-sub">IMC 18,5 – 24,9</div>
+      </div>
+
+      <div class="mcard">
+        <div class="mcard-icon">±</div>
+        <div class="mcard-label">Diferença</div>
+        <div class="mcard-val" id="m-diff">--</div>
+        <div class="mcard-sub">do peso ideal</div>
+      </div>
+
+      <div class="mcard">
+        <div class="mcard-icon">🔥</div>
+        <div class="mcard-label">TMB</div>
+        <div class="mcard-val" id="m-tmb">--</div>
+        <div class="mcard-sub">kcal/dia · repouso</div>
+      </div>
+
+      <!-- Extra clínico -->
+      <div class="mcard clinico-card" id="m-gde-card" style="display:none">
+        <div class="mcard-icon">⚡</div>
+        <div class="mcard-label">GET</div>
+        <div class="mcard-val" id="m-gde">--</div>
+        <div class="mcard-sub">kcal/dia · com atividade</div>
+      </div>
+
+      <div class="mcard clinico-card" id="m-perc-card" style="display:none">
+        <div class="mcard-icon">📊</div>
+        <div class="mcard-label">Percentil IMC</div>
+        <div class="mcard-val" id="m-perc">--</div>
+        <div class="mcard-sub">referência adultos</div>
+      </div>
+
+      <!-- Extra academia -->
+      <div class="mcard academia-card" id="m-agua-card" style="display:none">
+        <div class="mcard-icon">💧</div>
+        <div class="mcard-label">Água diária</div>
+        <div class="mcard-val" id="m-agua">--</div>
+        <div class="mcard-sub">mL por kg/dia</div>
+      </div>
+
+      <div class="mcard academia-card" id="m-prot-card" style="display:none">
+        <div class="mcard-icon">🥩</div>
+        <div class="mcard-label">Proteína</div>
+        <div class="mcard-val" id="m-prot">--</div>
+        <div class="mcard-sub">g/dia · 1,8 g/kg</div>
+      </div>
+
     </div>
 
     <!-- Tabela OMS -->
-    <div class="card">
-      <div class="ref-card">
-        <div class="section-label">Tabela de referência OMS</div>
-        <table class="ref-table" id="ref-table">
-          <thead>
-            <tr>
-              <th>IMC</th>
-              <th>Classificação</th>
-              <th>Risco CV</th>
-            </tr>
-          </thead>
-          <tbody></tbody>
-        </table>
+    <div class="table-card">
+      <div class="table-header">
+        <span class="table-title">Classificação OMS</span>
+        <span class="table-badge">WHO 1995 / 2000</span>
+      </div>
+      <table class="oms-table" id="oms-table">
+        <thead>
+          <tr>
+            <th>IMC (kg/m²)</th>
+            <th>Classificação</th>
+            <th>Risco CV</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+
+      <!-- painel extra clínico -->
+      <div class="clinico-panel" id="clinico-panel" style="display:none">
+        <div class="cpanel-title">Interpretação clínica</div>
+        <p class="cpanel-text" id="cpanel-text">--</p>
+        <div class="cpanel-refs">Harris-Benedict rev. · Roza &amp; Shizgal 1984 · OMS 1995/2000</div>
+      </div>
+
+      <!-- painel extra academia -->
+      <div class="academia-panel" id="academia-panel" style="display:none">
+        <div class="cpanel-title">Recomendações de treino</div>
+        <p class="cpanel-text" id="apanel-text">--</p>
       </div>
     </div>
 
-  </div><!-- /resultado -->
+  </section>
 
-  <footer class="app-footer">Harris-Benedict rev. · Roza &amp; Shizgal 1984 · OMS 1995</footer>
+  <footer class="app-footer">
+    <span>Baseado em: Harris-Benedict (rev. 1984) · OMS 1995 · Referência não substitui avaliação profissional</span>
+  </footer>
 
-</div><!-- /app -->
+</div><!-- /shell -->
 
 <script src="script.js"></script>
 </body>
