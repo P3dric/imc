@@ -380,39 +380,48 @@ body{
 
 .espectro-track{
   position:relative;
-  height:5px;
-  border-radius:3px;
-  background:linear-gradient(
-    to right,
-    var(--c-baixo)  0%   25%,
-    var(--c-normal) 25%  50%,
-    var(--c-sobre)  50%  62.5%,
-    var(--c-ob1)    62.5% 75%,
-    var(--c-ob2)    75%  87.5%,
-    var(--c-ob3)    87.5% 100%
-  );
+  display:flex;
+  gap:3px;
+  align-items:center;
   overflow:visible;
 }
 
+/* Cada segmento da barra representa uma faixa */
+.seg{
+  height:5px;
+  border-radius:3px;
+  opacity:.22;
+  transition:opacity .4s, height .35s, box-shadow .35s;
+  flex-shrink:0;
+}
+
+/* Segmento ativo: mais alto, opaco e com brilho */
+.seg.ativo{
+  opacity:1;
+  height:10px;
+  box-shadow:0 0 8px currentColor;
+}
+
 .espectro-pointer{
-  position:absolute;
-  top:-6px;
-  width:2px;
-  height:17px;
-  background:var(--text);
-  border-radius:1px;
-  transform:translateX(-50%);
-  transition:left .5s cubic-bezier(.4,0,.2,1);
-  left:0%;
+  display:none; /* substituído pelos segmentos */
 }
 
 .espectro-labels{
   display:flex;
-  justify-content:space-between;
+  gap:3px;
   font-size:9px;
   color:var(--muted);
-  letter-spacing:.08em;
+  letter-spacing:.06em;
   text-transform:uppercase;
+}
+
+/* Cada label alinha com seu segmento */
+.seg-label{
+  text-align:center;
+  transition:color .3s;
+}
+.seg-label.ativo{
+  color:var(--text);
 }
 
 /* Tabela de referência */
@@ -617,16 +626,24 @@ body{
       <span class="classificacao-badge" id="imc-badge"></span>
     </div>
 
-    <!-- Espectro -->
+    <!-- Espectro com segmentos por faixa -->
     <div class="espectro" id="espectro">
       <div class="espectro-track">
-        <div class="espectro-pointer" id="imc-pointer"></div>
+        <!-- larguras proporcionais ao intervalo de cada faixa (escala 0–40) -->
+        <div class="seg" id="seg-baixo"  data-faixa="baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
+        <div class="seg" id="seg-normal" data-faixa="normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
+        <div class="seg" id="seg-sobre"  data-faixa="sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
+        <div class="seg" id="seg-ob1"    data-faixa="ob1"    style="background:#FF6B35;color:#FF6B35;width:12.5%"></div>
+        <div class="seg" id="seg-ob2"    data-faixa="ob2"    style="background:#E63946;color:#E63946;width:12.5%"></div>
+        <div class="seg" id="seg-ob3"    data-faixa="ob3"    style="background:#9B1D20;color:#9B1D20;width:12.5%"></div>
       </div>
       <div class="espectro-labels">
-        <span>Baixo</span>
-        <span>Normal</span>
-        <span>Sobre</span>
-        <span>Obeso</span>
+        <span class="seg-label" id="lbl-baixo"  style="width:46.25%">Baixo</span>
+        <span class="seg-label" id="lbl-normal" style="width:31.25%">Normal</span>
+        <span class="seg-label" id="lbl-sobre"  style="width:12.5%">Sobre</span>
+        <span class="seg-label" id="lbl-ob1"    style="width:12.5%">Ob. I</span>
+        <span class="seg-label" id="lbl-ob2"    style="width:12.5%">Ob. II</span>
+        <span class="seg-label" id="lbl-ob3"    style="width:12.5%">Ob. III</span>
       </div>
     </div>
 
@@ -717,14 +734,24 @@ function calcular(){
   elBadge.style.background=f.bgBadge;
   elBadge.style.color=f.textBadge;
 
-  // Ponteiro espectro
-  var pct=Math.min((imc/40)*100,100);
-  document.getElementById('imc-pointer').style.left=pct.toFixed(1)+'%';
+  // Ativa segmento da faixa correspondente e apaga os demais
+  document.querySelectorAll('.seg').forEach(function(s){s.classList.remove('ativo')});
+  document.querySelectorAll('.seg-label').forEach(function(s){s.classList.remove('ativo')});
+  var segAtivo=document.getElementById('seg-'+f.faixa);
+  var lblAtivo=document.getElementById('lbl-'+f.faixa);
+  if(segAtivo){segAtivo.classList.add('ativo')}
+  if(lblAtivo){lblAtivo.classList.add('ativo');lblAtivo.style.color=f.cor}
 
-  // Linha ativa na tabela
-  document.querySelectorAll('.ref-linha').forEach(function(l){l.classList.remove('ativa')});
+  // Linha ativa na tabela — destaca com a cor da faixa
+  document.querySelectorAll('.ref-linha').forEach(function(l){
+    l.classList.remove('ativa');
+    l.style.background='';
+  });
   var la=document.querySelector('.ref-linha[data-faixa="'+f.faixa+'"]');
-  if(la)la.classList.add('ativa');
+  if(la){
+    la.classList.add('ativa');
+    la.style.background=f.bgBadge;
+  }
 
   // Silhueta ativa
   document.getElementById('silhueta').classList.add('ativa');
