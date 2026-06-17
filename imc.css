@@ -162,7 +162,7 @@ body {
   font-weight: 500;
   color: var(--text);
   /* Remove setas nativas de input[type=number] */
-  -moz-appearance: textfield;
+  moz-appearance: textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button {
