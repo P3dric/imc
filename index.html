@@ -1,131 +1,762 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>IMC — Calculadora</title>
-  <!-- Fontes: Space Grotesk (display) + Inter (dados) -->
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="style.css" />
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMC — Calculadora</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0D0D0D;
+  --surface:#161616;
+  --border:#252525;
+  --text:#F0EDE8;
+  --muted:#555250;
+  --accent:#C8F135;
+  --c-baixo:#4A9EFF;
+  --c-normal:#C8F135;
+  --c-sobre:#FFB830;
+  --c-ob1:#FF6B35;
+  --c-ob2:#E63946;
+  --c-ob3:#9B1D20;
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Grotesk',sans-serif;
+  min-height:100vh;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:0;
+  overflow-x:hidden;
+}
+
+/* ── Grid de fundo ── */
+.bg-grid{
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
+  background-image:
+    linear-gradient(rgba(200,241,53,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,241,53,.03) 1px, transparent 1px);
+  background-size:40px 40px;
+}
+
+/* Brilho central sutil */
+.bg-glow{
+  position:fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  width:600px;
+  height:400px;
+  background:radial-gradient(ellipse at center, rgba(200,241,53,.07) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── Layout ── */
+.page{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:960px;
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto 1fr auto;
+  grid-template-areas:
+    "header  header"
+    "left    right"
+    "footer  footer";
+  gap:0;
+  padding:0 2rem;
+}
+
+/* ── Header ── */
+.header{
+  grid-area:header;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:2rem 0 2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:3rem;
+}
+
+.header-logo{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+
+.header-marca{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.2em;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+
+.header-sub{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.06em;
+}
+
+.header-tag{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  border:1px solid var(--border);
+  padding:4px 10px;
+  border-radius:2px;
+}
+
+/* ── Coluna esquerda — formulário ── */
+.col-left{
+  grid-area:left;
+  padding-right:3rem;
+  padding-bottom:4rem;
+  border-right:1px solid var(--border);
+  display:flex;
+  flex-direction:column;
+  gap:2.5rem;
+}
+
+/* Intro text */
+.intro-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:.5rem;
+}
+
+.intro-title{
+  font-size:28px;
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+
+.intro-title em{
+  color:var(--accent);
+  font-style:normal;
+}
+
+/* Bloco de métricas rápidas */
+.stats-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+}
+
+.stat{
+  background:var(--surface);
+  padding:.75rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.stat-val{
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:-.02em;
+}
+
+.stat-label{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* Formulário */
+.form-block{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
+
+.input-wrap{
+  display:flex;
+  align-items:center;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  transition:border-color .2s;
+}
+
+.input-wrap:focus-within{
+  border-color:var(--accent);
+}
+
+.field-input{
+  flex:1;
+  min-width:0;
+  height:52px;
+  padding:0 14px;
+  background:transparent;
+  border:none;
+  outline:none;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;
+  font-weight:500;
+  color:var(--text);
+  -moz-appearance:textfield;
+}
+.field-input::-webkit-outer-spin-button,
+.field-input::-webkit-inner-spin-button{-webkit-appearance:none}
+.field-input::placeholder{color:var(--border)}
+
+.unit{
+  padding:0 14px 0 4px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.06em;
+  flex-shrink:0;
+}
+
+.btn-calcular{
+  height:52px;
+  width:100%;
+  background:var(--accent);
+  color:#0D0D0D;
+  border:none;
+  border-radius:4px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:opacity .15s, transform .1s;
+  margin-top:.25rem;
+}
+.btn-calcular:hover{opacity:.85}
+.btn-calcular:active{transform:scale(.98)}
+
+.btn-arrow{
+  font-size:18px;
+  transition:transform .2s;
+}
+.btn-calcular:hover .btn-arrow{transform:translateX(4px)}
+
+/* ── Coluna direita — silhueta + resultado ── */
+.col-right{
+  grid-area:right;
+  padding-left:3rem;
+  padding-bottom:4rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+  position:relative;
+}
+
+/* Silhueta SVG do corpo humano */
+.silhueta-wrap{
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.silhueta-svg{
+  width:140px;
+  opacity:.18;
+  transition:opacity .4s;
+}
+
+.silhueta-svg.ativa{
+  opacity:.55;
+}
+
+/* Linhas de medida decorativas ao lado da silhueta */
+.medida-linha{
+  position:absolute;
+  right:calc(50% - 90px);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.06em;
+  opacity:0;
+  transition:opacity .4s .2s;
+}
+.medida-linha.vis{opacity:1}
+.medida-linha::before{
+  content:'';
+  display:block;
+  width:20px;
+  height:1px;
+  background:var(--border);
+}
+
+.medida-peso{top:38%}
+.medida-altura{top:60%}
+
+/* Placar do IMC */
+.imc-placar{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .4s, transform .4s;
+}
+.imc-placar.vis{opacity:1;transform:translateY(0)}
+
+.imc-numero{
+  font-size:clamp(56px,12vw,88px);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.04em;
+  transition:color .3s;
+}
+
+.imc-unidade{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.08em;
+}
+
+.classificacao-badge{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:5px 14px;
+  border-radius:2px;
+  margin-top:.25rem;
+}
+
+/* Espectro */
+.espectro{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  opacity:0;
+  transition:opacity .4s .15s;
+}
+.espectro.vis{opacity:1}
+
+.espectro-track{
+  position:relative;
+  height:5px;
+  border-radius:3px;
+  background:linear-gradient(
+    to right,
+    var(--c-baixo)  0%   25%,
+    var(--c-normal) 25%  50%,
+    var(--c-sobre)  50%  62.5%,
+    var(--c-ob1)    62.5% 75%,
+    var(--c-ob2)    75%  87.5%,
+    var(--c-ob3)    87.5% 100%
+  );
+  overflow:visible;
+}
+
+.espectro-pointer{
+  position:absolute;
+  top:-6px;
+  width:2px;
+  height:17px;
+  background:var(--text);
+  border-radius:1px;
+  transform:translateX(-50%);
+  transition:left .5s cubic-bezier(.4,0,.2,1);
+  left:0%;
+}
+
+.espectro-labels{
+  display:flex;
+  justify-content:space-between;
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* Tabela de referência */
+.referencia{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .4s .25s;
+}
+.referencia.vis{opacity:1}
+
+.ref-titulo{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+
+.ref-linha{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
+.ref-linha:last-child{border-bottom:none}
+.ref-linha.ativa{background:rgba(200,241,53,.06)}
+
+.ref-cor{
+  width:7px;height:7px;border-radius:1px;flex-shrink:0;
+}
+.ref-linha[data-faixa="baixo"]  .ref-cor{background:var(--c-baixo)}
+.ref-linha[data-faixa="normal"] .ref-cor{background:var(--c-normal)}
+.ref-linha[data-faixa="sobre"]  .ref-cor{background:var(--c-sobre)}
+.ref-linha[data-faixa="ob1"]    .ref-cor{background:var(--c-ob1)}
+.ref-linha[data-faixa="ob2"]    .ref-cor{background:var(--c-ob2)}
+.ref-linha[data-faixa="ob3"]    .ref-cor{background:var(--c-ob3)}
+
+.ref-nome{flex:1;font-size:12px;color:var(--text)}
+.ref-range{font-size:11px;color:var(--muted);letter-spacing:.04em}
+
+/* ── Footer ── */
+.footer{
+  grid-area:footer;
+  border-top:1px solid var(--border);
+  padding:1.25rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.footer-copy{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.06em;
+}
+
+.footer-dots{
+  display:flex;
+  gap:6px;
+}
+
+.footer-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--border);
+}
+
+/* Animação de sacudida para inputs inválidos */
+@keyframes sacudir{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+
+/* ── Responsivo ── */
+@media(max-width:700px){
+  .page{
+    grid-template-columns:1fr;
+    grid-template-areas:"header""left""right""footer";
+    padding:0 1.25rem;
+  }
+  .col-left{padding-right:0;border-right:none;border-bottom:1px solid var(--border);padding-bottom:2.5rem}
+  .col-right{padding-left:0;padding-top:2rem}
+  .header-tag{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
+</style>
 </head>
 <body>
 
-  <main class="shell">
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
 
-    <!-- Cabeçalho mínimo -->
-    <header class="header">
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">
       <span class="header-marca">IMC</span>
       <span class="header-sub">Body Mass Index</span>
-    </header>
+    </div>
+    <span class="header-tag">OMS · 2024</span>
+  </header>
 
-    <!-- Formulário de entrada -->
-    <section class="form-section">
+  <!-- Coluna esquerda -->
+  <div class="col-left">
 
-      <div class="inputs-row">
+    <div>
+      <div class="intro-label">Avaliação corporal</div>
+      <h1 class="intro-title">Calcule seu<br><em>índice de massa</em><br>corporal</h1>
+    </div>
 
-        <div class="field">
-          <label class="field-label" for="peso">Peso</label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="peso"
-                   placeholder="70" min="1" max="300" step="0.1" />
-            <span class="unit">kg</span>
-          </div>
+    <!-- Dados de referência rápida -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-val">18,5</span>
+        <span class="stat-label">Mín. normal</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">24,9</span>
+        <span class="stat-label">Máx. normal</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">6</span>
+        <span class="stat-label">Faixas OMS</span>
+      </div>
+    </div>
+
+    <!-- Formulário -->
+    <div class="form-block">
+
+      <div class="field">
+        <label class="field-label" for="peso">Peso corporal</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="peso"
+                 placeholder="70" min="1" max="300" step="0.1"/>
+          <span class="unit">kg</span>
         </div>
+      </div>
 
-        <div class="field-divider" aria-hidden="true">/</div>
-
-        <div class="field">
-          <label class="field-label" for="altura">Altura</label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="altura"
-                   placeholder="175" min="50" max="250" step="1" />
-            <span class="unit">cm</span>
-          </div>
+      <div class="field">
+        <label class="field-label" for="altura">Altura</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="altura"
+                 placeholder="175" min="50" max="250" step="1"/>
+          <span class="unit">cm</span>
         </div>
-
       </div>
 
       <button class="btn-calcular" onclick="calcular()">
-        Calcular
+        Calcular IMC
         <span class="btn-arrow" aria-hidden="true">→</span>
       </button>
 
-    </section>
+    </div>
+  </div>
 
-    <!-- Resultado — oculto até o cálculo -->
-    <section class="resultado" id="resultado" aria-live="polite">
+  <!-- Coluna direita -->
+  <div class="col-right">
 
-      <!-- Número gigante do IMC — o "placar" -->
-      <div class="imc-placar">
-        <span class="imc-numero" id="imc-val">—</span>
-        <span class="imc-unidade">kg/m²</span>
+    <!-- Silhueta humana SVG decorativa -->
+    <div class="silhueta-wrap">
+
+      <!-- Linhas de medida -->
+      <div class="medida-linha medida-peso" id="med-peso"></div>
+      <div class="medida-linha medida-altura" id="med-altura"></div>
+
+      <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cabeça -->
+        <circle cx="50" cy="22" r="14" fill="#C8F135"/>
+        <!-- Pescoço -->
+        <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
+        <!-- Torso -->
+        <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
+        <!-- Braço esquerdo -->
+        <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
+        <!-- Braço direito -->
+        <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
+        <!-- Perna esquerda -->
+        <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
+        <!-- Perna direita -->
+        <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
+      </svg>
+
+    </div>
+
+    <!-- Placar do IMC -->
+    <div class="imc-placar" id="imc-placar">
+      <span class="imc-numero" id="imc-val">—</span>
+      <span class="imc-unidade">kg / m²</span>
+      <span class="classificacao-badge" id="imc-badge"></span>
+    </div>
+
+    <!-- Espectro -->
+    <div class="espectro" id="espectro">
+      <div class="espectro-track">
+        <div class="espectro-pointer" id="imc-pointer"></div>
       </div>
-
-      <!-- Badge de classificação -->
-      <div class="classificacao-wrap">
-        <span class="classificacao-badge" id="imc-badge"></span>
+      <div class="espectro-labels">
+        <span>Baixo</span>
+        <span>Normal</span>
+        <span>Sobre</span>
+        <span>Obeso</span>
       </div>
+    </div>
 
-      <!-- Barra de espectro -->
-      <div class="espectro">
-        <div class="espectro-track">
-          <div class="espectro-fill" id="imc-bar"></div>
-          <!-- Marcador ponteiro -->
-          <div class="espectro-pointer" id="imc-pointer"></div>
+    <!-- Tabela de referência -->
+    <div class="referencia" id="referencia">
+      <div class="ref-titulo">Tabela de referência — OMS</div>
+      <div class="ref-grid">
+        <div class="ref-linha" data-faixa="baixo">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Abaixo do peso</span>
+          <span class="ref-range">&lt; 18,5</span>
         </div>
-        <div class="espectro-labels">
-          <span>Baixo</span>
-          <span>Normal</span>
-          <span>Sobre</span>
-          <span>Obeso</span>
+        <div class="ref-linha" data-faixa="normal">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Peso normal</span>
+          <span class="ref-range">18,5 – 24,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="sobre">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Sobrepeso</span>
+          <span class="ref-range">25,0 – 29,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob1">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau I</span>
+          <span class="ref-range">30,0 – 34,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob2">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau II</span>
+          <span class="ref-range">35,0 – 39,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob3">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau III</span>
+          <span class="ref-range">&ge; 40,0</span>
         </div>
       </div>
+    </div>
 
-      <!-- Tabela de referência compacta -->
-      <div class="referencia">
-        <div class="ref-titulo">Tabela de referência</div>
-        <div class="ref-grid">
-          <div class="ref-linha" data-faixa="baixo">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Abaixo do peso</span>
-            <span class="ref-range">&lt; 18,5</span>
-          </div>
-          <div class="ref-linha" data-faixa="normal">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Peso normal</span>
-            <span class="ref-range">18,5 – 24,9</span>
-          </div>
-          <div class="ref-linha" data-faixa="sobre">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Sobrepeso</span>
-            <span class="ref-range">25,0 – 29,9</span>
-          </div>
-          <div class="ref-linha" data-faixa="ob1">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Obesidade grau I</span>
-            <span class="ref-range">30,0 – 34,9</span>
-          </div>
-          <div class="ref-linha" data-faixa="ob2">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Obesidade grau II</span>
-            <span class="ref-range">35,0 – 39,9</span>
-          </div>
-          <div class="ref-linha" data-faixa="ob3">
-            <div class="ref-cor"></div>
-            <span class="ref-nome">Obesidade grau III</span>
-            <span class="ref-range">&ge; 40,0</span>
-          </div>
-        </div>
-      </div>
+  </div>
 
-    </section>
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-copy">Classificação OMS · uso profissional e pessoal</span>
+    <div class="footer-dots">
+      <div class="footer-dot" style="background:var(--c-baixo)"></div>
+      <div class="footer-dot" style="background:var(--c-normal)"></div>
+      <div class="footer-dot" style="background:var(--c-sobre)"></div>
+      <div class="footer-dot" style="background:var(--c-ob1)"></div>
+      <div class="footer-dot" style="background:var(--c-ob2)"></div>
+      <div class="footer-dot" style="background:var(--c-ob3)"></div>
+    </div>
+  </footer>
 
-    <footer class="footer">
-      Classificação OMS · uso profissional e pessoal
-    </footer>
+</div>
 
-  </main>
+<script>
+var FAIXAS=[
+  {limite:18.5,cor:'#4A9EFF',label:'Abaixo do peso',faixa:'baixo',bgBadge:'rgba(74,158,255,.15)',textBadge:'#4A9EFF'},
+  {limite:25,  cor:'#C8F135',label:'Peso normal',    faixa:'normal',bgBadge:'rgba(200,241,53,.15)',textBadge:'#8FAF1E'},
+  {limite:30,  cor:'#FFB830',label:'Sobrepeso',       faixa:'sobre',bgBadge:'rgba(255,184,48,.15)',textBadge:'#FFB830'},
+  {limite:35,  cor:'#FF6B35',label:'Obesidade  ·  I', faixa:'ob1',  bgBadge:'rgba(255,107,53,.15)',textBadge:'#FF6B35'},
+  {limite:40,  cor:'#E63946',label:'Obesidade  ·  II',faixa:'ob2',  bgBadge:'rgba(230,57,70,.15)', textBadge:'#E63946'},
+  {limite:Infinity,cor:'#9B1D20',label:'Obesidade  ·  III',faixa:'ob3',bgBadge:'rgba(155,29,32,.15)',textBadge:'#C0484C'},
+];
 
-  <script src="script.js"></script>
+function calcular(){
+  var peso=parseFloat(document.getElementById('peso').value);
+  var alturaCm=parseFloat(document.getElementById('altura').value);
+
+  if(!peso||!alturaCm||peso<=0||alturaCm<=0){
+    sacudir();return;
+  }
+
+  var alturaM=alturaCm/100;
+  var imc=peso/(alturaM*alturaM);
+  var f=FAIXAS.find(function(x){return imc<x.limite;});
+
+  // Número
+  var elNum=document.getElementById('imc-val');
+  elNum.textContent=imc.toFixed(1);
+  elNum.style.color=f.cor;
+
+  // Badge
+  var elBadge=document.getElementById('imc-badge');
+  elBadge.textContent=f.label;
+  elBadge.style.background=f.bgBadge;
+  elBadge.style.color=f.textBadge;
+
+  // Ponteiro espectro
+  var pct=Math.min((imc/40)*100,100);
+  document.getElementById('imc-pointer').style.left=pct.toFixed(1)+'%';
+
+  // Linha ativa na tabela
+  document.querySelectorAll('.ref-linha').forEach(function(l){l.classList.remove('ativa')});
+  var la=document.querySelector('.ref-linha[data-faixa="'+f.faixa+'"]');
+  if(la)la.classList.add('ativa');
+
+  // Silhueta ativa
+  document.getElementById('silhueta').classList.add('ativa');
+  document.getElementById('silhueta').style.fill=f.cor;
+  document.querySelectorAll('.silhueta-svg path, .silhueta-svg circle, .silhueta-svg rect').forEach(function(el){
+    el.style.fill=f.cor;
+  });
+
+  // Linhas de medida
+  var mp=document.getElementById('med-peso');
+  var ma=document.getElementById('med-altura');
+  mp.textContent=peso+'kg';
+  ma.textContent=alturaCm+'cm';
+  mp.classList.add('vis');
+  ma.classList.add('vis');
+
+  // Mostra elementos com fade
+  document.getElementById('imc-placar').classList.add('vis');
+  document.getElementById('espectro').classList.add('vis');
+  document.getElementById('referencia').classList.add('vis');
+}
+
+function sacudir(){
+  var el=document.querySelector('.form-block');
+  el.style.animation='none';
+  el.offsetHeight;
+  el.style.animation='sacudir .35s ease';
+}
+
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter')calcular();
+});
+</script>
 </body>
 </html>
