@@ -3,994 +3,787 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>IMC Pro — Avaliação Clínica</title>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<title>IMC — Calculadora</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
 <style>
 :root{
-  --bg:#0A0A0A;
-  --surface:#111111;
-  --surface2:#181818;
-  --border:#222222;
-  --border2:#2E2E2E;
-  --text:#ECEAE4;
-  --muted:#4E4C47;
-  --muted2:#6E6C67;
+  --bg:#0D0D0D;
+  --surface:#161616;
+  --border:#252525;
+  --text:#F0EDE8;
+  --muted:#555250;
   --accent:#C8F135;
-  --accent-dim:rgba(200,241,53,.08);
-  --red:#E63946;
-  --amber:#FFB830;
-  --blue:#4A9EFF;
-  --green:#C8F135;
-  --font:'Space Grotesk',sans-serif;
-  --mono:'JetBrains Mono',monospace;
+  --c-baixo:#4A9EFF;
+  --c-normal:#C8F135;
+  --c-sobre:#FFB830;
+  --c-ob1:#FF6B35;
+  --c-ob2:#E63946;
+  --c-ob3:#9B1D20;
 }
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
-html{font-size:14px}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 body{
   background:var(--bg);
   color:var(--text);
-  font-family:var(--font);
+  font-family:'Space Grotesk',sans-serif;
   min-height:100vh;
-  display:grid;
-  grid-template-rows:auto 1fr;
+  display:flex;
+  align-items:flex-start;
+  justify-content:center;
+  padding:0;
   overflow-x:hidden;
 }
 
 /* ── Grid de fundo ── */
-body::before{
-  content:'';
+.bg-grid{
   position:fixed;
   inset:0;
   pointer-events:none;
   z-index:0;
   background-image:
-    linear-gradient(rgba(200,241,53,.025) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,241,53,.025) 1px,transparent 1px);
-  background-size:32px 32px;
+    linear-gradient(rgba(200,241,53,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,241,53,.03) 1px, transparent 1px);
+  background-size:40px 40px;
 }
 
-/* ── Topbar ── */
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:rgba(10,10,10,.92);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid var(--border);
+/* Brilho central sutil */
+.bg-glow{
+  position:fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  width:600px;
+  height:400px;
+  background:radial-gradient(ellipse at center, rgba(200,241,53,.07) 0%, transparent 70%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* ── Layout ── */
+.page{
+  position:relative;
+  z-index:1;
+  width:100%;
+  max-width:960px;
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  grid-template-rows:auto 1fr auto;
+  grid-template-areas:
+    "header  header"
+    "left    right"
+    "footer  footer";
+  gap:0;
+  padding:0 2rem;
+}
+
+/* ── Header ── */
+.header{
+  grid-area:header;
   display:flex;
   align-items:center;
   justify-content:space-between;
-  padding:0 2rem;
-  height:52px;
+  padding:2rem 0 2rem;
+  border-bottom:1px solid var(--border);
+  margin-bottom:3rem;
 }
 
-.topbar-left{display:flex;align-items:center;gap:1.5rem}
-
-.logo{
+.header-logo{
   display:flex;
   align-items:baseline;
-  gap:8px;
-}
-.logo-mark{
-  font-size:11px;font-weight:700;letter-spacing:.2em;
-  color:var(--accent);text-transform:uppercase;
-}
-.logo-sep{color:var(--border2);font-size:16px}
-.logo-title{
-  font-size:11px;letter-spacing:.1em;color:var(--muted2);text-transform:uppercase;
+  gap:10px;
 }
 
-.topbar-badge{
-  font-family:var(--mono);
-  font-size:10px;
+.header-marca{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.2em;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+
+.header-sub{
+  font-size:12px;
   color:var(--muted);
+  letter-spacing:.06em;
+}
+
+.header-tag{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.1em;
+  text-transform:uppercase;
   border:1px solid var(--border);
-  padding:3px 8px;
+  padding:4px 10px;
   border-radius:2px;
-  letter-spacing:.04em;
 }
 
-.topbar-right{display:flex;align-items:center;gap:1rem}
-
-.status-dot{
-  width:6px;height:6px;border-radius:50%;
-  background:var(--accent);
-  box-shadow:0 0 6px var(--accent);
-}
-.status-label{font-size:10px;color:var(--muted2);letter-spacing:.06em;text-transform:uppercase}
-
-/* ── Layout principal ── */
-.main{
-  position:relative;
-  z-index:1;
-  display:grid;
-  grid-template-columns:340px 1fr 280px;
-  min-height:calc(100vh - 52px);
-}
-
-/* ══════════════ PAINEL ESQUERDO — Entrada de dados ══════════════ */
-.panel-left{
+/* ── Coluna esquerda — formulário ── */
+.col-left{
+  grid-area:left;
+  padding-right:3rem;
+  padding-bottom:4rem;
   border-right:1px solid var(--border);
   display:flex;
   flex-direction:column;
-  overflow-y:auto;
+  gap:2.5rem;
 }
 
-.panel-header{
-  padding:1.25rem 1.5rem;
-  border-bottom:1px solid var(--border);
+/* Intro text */
+.intro-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:.5rem;
+}
+
+.intro-title{
+  font-size:28px;
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+
+.intro-title em{
+  color:var(--accent);
+  font-style:normal;
+}
+
+/* Bloco de métricas rápidas */
+.stats-row{
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+}
+
+.stat{
+  background:var(--surface);
+  padding:.75rem 1rem;
   display:flex;
-  align-items:center;
-  justify-content:space-between;
+  flex-direction:column;
+  gap:2px;
 }
 
-.panel-title{
-  font-size:10px;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted2);
+.stat-val{
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:-.02em;
 }
 
-.panel-num{
-  font-family:var(--mono);font-size:10px;color:var(--border2);
+.stat-label{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
 }
 
-.panel-body{padding:1.5rem;display:flex;flex-direction:column;gap:1.5rem;flex:1}
-
-/* Seção dentro do painel */
-.section-label{
-  font-size:9px;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted);
-  padding-bottom:.6rem;
-  border-bottom:1px solid var(--border);
-  margin-bottom:.9rem;
+/* Formulário */
+.form-block{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
 }
 
-/* Campo de input */
-.field{display:flex;flex-direction:column;gap:6px}
-.field+.field{margin-top:.75rem}
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
 
 .field-label{
-  font-size:10px;font-weight:500;letter-spacing:.12em;
-  text-transform:uppercase;color:var(--muted2);
-  display:flex;justify-content:space-between;align-items:center;
-}
-
-.field-hint{
-  font-family:var(--mono);font-size:9px;color:var(--muted);
-  font-weight:400;letter-spacing:.04em;text-transform:none;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
 }
 
 .input-wrap{
-  display:flex;align-items:center;
-  background:var(--surface2);
+  display:flex;
+  align-items:center;
+  background:var(--surface);
   border:1px solid var(--border);
-  border-radius:3px;
-  transition:border-color .15s;
+  border-radius:4px;
+  transition:border-color .2s;
 }
-.input-wrap:focus-within{border-color:var(--accent)}
+
+.input-wrap:focus-within{
+  border-color:var(--accent);
+}
 
 .field-input{
-  flex:1;min-width:0;height:40px;padding:0 12px;
-  background:transparent;border:none;outline:none;
-  font-family:var(--mono);font-size:16px;font-weight:500;
+  flex:1;
+  min-width:0;
+  height:52px;
+  padding:0 14px;
+  background:transparent;
+  border:none;
+  outline:none;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;
+  font-weight:500;
   color:var(--text);
   -moz-appearance:textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button{-webkit-appearance:none}
-.field-input::placeholder{color:var(--border2)}
+.field-input::placeholder{color:var(--border)}
 
-.field-unit{
-  padding:0 12px 0 4px;font-family:var(--mono);
-  font-size:10px;color:var(--muted);flex-shrink:0;
-}
-
-/* Select */
-.field-select{
-  width:100%;height:40px;padding:0 12px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:3px;outline:none;
-  font-family:var(--mono);font-size:13px;color:var(--text);
-  cursor:pointer;transition:border-color .15s;
-  appearance:none;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%234E4C47' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E");
-  background-repeat:no-repeat;
-  background-position:right 12px center;
-}
-.field-select:focus{border-color:var(--accent)}
-.field-select option{background:var(--surface2)}
-
-/* Grid 2 colunas */
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-
-/* Botão calcular */
-.btn-calc{
-  width:100%;height:44px;margin-top:.5rem;
-  background:var(--accent);color:#0A0A0A;
-  border:none;border-radius:3px;
-  font-family:var(--font);font-size:11px;font-weight:700;
-  letter-spacing:.18em;text-transform:uppercase;
-  cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:opacity .15s,transform .1s;
-}
-.btn-calc:hover{opacity:.85}
-.btn-calc:active{transform:scale(.98)}
-
-/* Botão secundário */
-.btn-sec{
-  width:100%;height:36px;
-  background:transparent;color:var(--muted2);
-  border:1px solid var(--border);border-radius:3px;
-  font-family:var(--font);font-size:10px;font-weight:500;
-  letter-spacing:.14em;text-transform:uppercase;
-  cursor:pointer;transition:border-color .15s,color .15s;
-  display:flex;align-items:center;justify-content:center;gap:8px;
-}
-.btn-sec:hover{border-color:var(--border2);color:var(--text)}
-
-/* ══════════════ PAINEL CENTRAL — Resultado clínico ══════════════ */
-.panel-center{
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;
-  overflow-y:auto;
-}
-
-.center-hero{
-  padding:2.5rem 2rem 2rem;
-  border-bottom:1px solid var(--border);
-  display:grid;
-  grid-template-columns:1fr auto;
-  gap:1.5rem;
-  align-items:start;
-}
-
-.hero-left{display:flex;flex-direction:column;gap:.75rem}
-
-.hero-eyebrow{
-  font-size:9px;font-weight:700;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--muted);
-  display:flex;align-items:center;gap:8px;
-}
-.hero-eyebrow::before{
-  content:'';display:block;width:16px;height:1px;background:var(--muted);
-}
-
-.hero-num{
-  font-size:72px;font-weight:700;line-height:1;
-  letter-spacing:-.04em;font-family:var(--mono);
-  transition:color .3s;
+.unit{
+  padding:0 14px 0 4px;
+  font-size:12px;
+  font-weight:500;
   color:var(--muted);
-}
-
-.hero-unit{
-  font-family:var(--mono);font-size:11px;color:var(--muted);
   letter-spacing:.06em;
+  flex-shrink:0;
 }
 
-.hero-classif{
-  display:inline-flex;align-items:center;gap:8px;
-  padding:6px 14px;border-radius:2px;
-  font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  border:1px solid transparent;
-  transition:all .3s;
+.btn-calcular{
+  height:52px;
+  width:100%;
+  background:var(--accent);
+  color:#0D0D0D;
+  border:none;
+  border-radius:4px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:opacity .15s, transform .1s;
+  margin-top:.25rem;
+}
+.btn-calcular:hover{opacity:.85}
+.btn-calcular:active{transform:scale(.98)}
+
+.btn-arrow{
+  font-size:18px;
+  transition:transform .2s;
+}
+.btn-calcular:hover .btn-arrow{transform:translateX(4px)}
+
+/* ── Coluna direita — silhueta + resultado ── */
+.col-right{
+  grid-area:right;
+  padding-left:3rem;
+  padding-bottom:4rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+  position:relative;
 }
 
-/* Silhueta lado direito do hero */
-.hero-silhueta{
-  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+/* Silhueta SVG do corpo humano */
+.silhueta-wrap{
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
 }
 
 .silhueta-svg{
-  width:90px;opacity:.15;transition:opacity .4s;
-}
-.silhueta-svg.ativa{opacity:.6}
-.silhueta-svg path,
-.silhueta-svg circle,
-.silhueta-svg rect{transition:fill .4s}
-
-/* Métricas secundárias abaixo do hero */
-.metrics-bar{
-  display:grid;grid-template-columns:repeat(4,1fr);
-  border-bottom:1px solid var(--border);
+  width:140px;
+  opacity:.18;
+  transition:opacity .4s;
 }
 
-.metric{
-  padding:1rem 1.25rem;
-  border-right:1px solid var(--border);
-  display:flex;flex-direction:column;gap:4px;
-}
-.metric:last-child{border-right:none}
-
-.metric-label{
-  font-size:9px;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--muted);
+.silhueta-svg.ativa{
+  opacity:.55;
 }
 
-.metric-val{
-  font-family:var(--mono);font-size:20px;font-weight:500;
-  color:var(--muted);transition:color .3s;
+/* Linhas de medida decorativas ao lado da silhueta */
+.medida-linha{
+  position:absolute;
+  right:calc(50% - 90px);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.06em;
+  opacity:0;
+  transition:opacity .4s .2s;
+}
+.medida-linha.vis{opacity:1}
+.medida-linha::before{
+  content:'';
+  display:block;
+  width:20px;
+  height:1px;
+  background:var(--border);
 }
 
-.metric-sub{font-size:10px;color:var(--muted);transition:color .3s}
+.medida-peso{top:38%}
+.medida-altura{top:60%}
 
-/* Seção de interpretação clínica */
-.interp-section{padding:1.5rem 2rem;border-bottom:1px solid var(--border)}
-
-.interp-title{
-  font-size:9px;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted);
-  margin-bottom:1rem;
-  display:flex;align-items:center;gap:8px;
+/* Placar do IMC */
+.imc-placar{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .4s, transform .4s;
 }
-.interp-title::after{content:'';flex:1;height:1px;background:var(--border)}
+.imc-placar.vis{opacity:1;transform:translateY(0)}
 
-.interp-grid{display:grid;grid-template-columns:1fr 1fr;gap:.75rem}
-
-.interp-card{
-  background:var(--surface);border:1px solid var(--border);
-  border-radius:3px;padding:.9rem 1rem;
-  display:flex;flex-direction:column;gap:5px;
-  transition:border-color .3s;
-}
-
-.interp-card-label{
-  font-size:9px;font-weight:700;letter-spacing:.14em;
-  text-transform:uppercase;color:var(--muted);
+.imc-numero{
+  font-size:clamp(56px,12vw,88px);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.04em;
+  transition:color .3s;
 }
 
-.interp-card-val{
-  font-family:var(--mono);font-size:13px;font-weight:500;
-  color:var(--muted);transition:color .3s;
-  line-height:1.4;
+.imc-unidade{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.08em;
 }
 
-/* Espectro segmentado */
-.espectro-section{padding:1.25rem 2rem}
-
-.espectro-label{
-  font-size:9px;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted);
-  margin-bottom:.9rem;
-  display:flex;align-items:center;gap:8px;
+.classificacao-badge{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:5px 14px;
+  border-radius:2px;
+  margin-top:.25rem;
 }
-.espectro-label::after{content:'';flex:1;height:1px;background:var(--border)}
+
+/* Espectro */
+.espectro{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  opacity:0;
+  transition:opacity .4s .15s;
+}
+.espectro.vis{opacity:1}
 
 .espectro-track{
-  display:flex;gap:3px;align-items:center;margin-bottom:6px;
+  position:relative;
+  display:flex;
+  gap:3px;
+  align-items:center;
+  overflow:visible;
 }
 
+/* Cada segmento da barra representa uma faixa */
 .seg{
-  height:4px;border-radius:2px;opacity:.2;
-  transition:opacity .4s,height .35s,box-shadow .4s;
+  height:5px;
+  border-radius:3px;
+  opacity:.22;
+  transition:opacity .4s, height .35s, box-shadow .35s;
   flex-shrink:0;
 }
-.seg.ativo{opacity:1;height:10px}
 
-.espectro-ticks{
-  display:flex;gap:3px;margin-top:2px;
-}
-
-.tick-group{
-  display:flex;flex-direction:column;gap:2px;flex-shrink:0;
-}
-.tick-name{
-  font-size:8px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;
-  transition:color .3s;
-  white-space:nowrap;
-}
-.tick-range{
-  font-family:var(--mono);font-size:8px;color:var(--border2);
-  transition:color .3s;
-}
-.tick-group.ativo .tick-name{color:var(--text)}
-.tick-group.ativo .tick-range{color:var(--muted2)}
-
-/* ══════════════ PAINEL DIREITO — Histórico ══════════════ */
-.panel-right{
-  display:flex;flex-direction:column;overflow-y:auto;
+/* Segmento ativo: mais alto, opaco e com brilho */
+.seg.ativo{
+  opacity:1;
+  height:10px;
+  box-shadow:0 0 8px currentColor;
 }
 
-.hist-header{
-  padding:1.25rem 1.25rem;
-  border-bottom:1px solid var(--border);
-  display:flex;align-items:center;justify-content:space-between;
+.espectro-pointer{
+  display:none; /* substituído pelos segmentos */
 }
 
-.hist-title{
-  font-size:10px;font-weight:700;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--muted2);
-}
-
-.hist-count{
-  font-family:var(--mono);font-size:10px;color:var(--muted);
-  background:var(--surface2);border:1px solid var(--border);
-  padding:2px 7px;border-radius:2px;
-}
-
-.hist-empty{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  gap:.5rem;padding:2rem;
+.espectro-labels{
+  display:flex;
+  gap:3px;
+  font-size:9px;
   color:var(--muted);
+  letter-spacing:.06em;
+  text-transform:uppercase;
 }
-.hist-empty-icon{font-size:24px;opacity:.3}
-.hist-empty-text{font-size:11px;letter-spacing:.06em;text-align:center;line-height:1.6}
 
-.hist-list{display:flex;flex-direction:column}
+/* Cada label alinha com seu segmento */
+.seg-label{
+  text-align:center;
+  transition:color .3s;
+}
+.seg-label.ativo{
+  color:var(--text);
+}
 
-.hist-item{
-  padding:.9rem 1.25rem;
+/* Tabela de referência */
+.referencia{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .4s .25s;
+}
+.referencia.vis{opacity:1}
+
+.ref-titulo{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:8px 12px;
   border-bottom:1px solid var(--border);
-  display:flex;flex-direction:column;gap:4px;
-  cursor:pointer;transition:background .15s;
-  position:relative;
-}
-.hist-item:hover{background:var(--surface)}
-.hist-item:last-child{border-bottom:none}
-
-.hist-item-top{display:flex;align-items:center;justify-content:space-between}
-
-.hist-item-name{
-  font-size:12px;font-weight:500;color:var(--text);
+  background:var(--surface);
 }
 
-.hist-item-imc{
-  font-family:var(--mono);font-size:13px;font-weight:500;
+.ref-linha{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
 }
+.ref-linha:last-child{border-bottom:none}
+.ref-linha.ativa{background:rgba(200,241,53,.06)}
 
-.hist-item-meta{
-  font-family:var(--mono);font-size:10px;color:var(--muted);
-  display:flex;gap:.75rem;
+.ref-cor{
+  width:7px;height:7px;border-radius:1px;flex-shrink:0;
 }
+.ref-linha[data-faixa="baixo"]  .ref-cor{background:var(--c-baixo)}
+.ref-linha[data-faixa="normal"] .ref-cor{background:var(--c-normal)}
+.ref-linha[data-faixa="sobre"]  .ref-cor{background:var(--c-sobre)}
+.ref-linha[data-faixa="ob1"]    .ref-cor{background:var(--c-ob1)}
+.ref-linha[data-faixa="ob2"]    .ref-cor{background:var(--c-ob2)}
+.ref-linha[data-faixa="ob3"]    .ref-cor{background:var(--c-ob3)}
 
-.hist-item-classif{
-  font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
-  padding:2px 7px;border-radius:2px;
-}
+.ref-nome{flex:1;font-size:12px;color:var(--text)}
+.ref-range{font-size:11px;color:var(--muted);letter-spacing:.04em}
 
-/* Linha lateral colorida nos itens */
-.hist-item::before{
-  content:'';
-  position:absolute;left:0;top:0;bottom:0;width:2px;
-  border-radius:0 1px 1px 0;
-  opacity:0;transition:opacity .2s;
-}
-.hist-item.has-color::before{opacity:1}
-
-/* Form de novo paciente */
-.novo-pac{
-  padding:1rem 1.25rem;
+/* ── Footer ── */
+.footer{
+  grid-area:footer;
   border-top:1px solid var(--border);
-  display:flex;flex-direction:column;gap:.6rem;
-  margin-top:auto;
+  padding:1.25rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
-.novo-pac-label{
-  font-size:9px;font-weight:700;letter-spacing:.16em;
-  text-transform:uppercase;color:var(--muted);
-}
-.novo-pac-input{
-  width:100%;height:34px;padding:0 10px;
-  background:var(--surface2);border:1px solid var(--border);
-  border-radius:3px;outline:none;
-  font-family:var(--font);font-size:12px;color:var(--text);
-  transition:border-color .15s;
-}
-.novo-pac-input:focus{border-color:var(--accent)}
-.novo-pac-input::placeholder{color:var(--muted)}
 
-/* ── Tooltip de risco cardiovascular ── */
-.risco-bar{
-  display:flex;height:3px;border-radius:2px;overflow:hidden;
-  margin-top:6px;
+.footer-copy{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.06em;
 }
-.risco-seg{flex:1;background:var(--border);transition:background .4s}
 
-/* ── Responsivo básico ── */
-@media(max-width:900px){
-  .main{grid-template-columns:1fr 1fr;grid-template-rows:auto auto}
-  .panel-right{grid-column:1/-1;border-top:1px solid var(--border);border-right:none}
+.footer-dots{
+  display:flex;
+  gap:6px;
 }
-@media(max-width:600px){
-  .main{grid-template-columns:1fr}
-  .panel-left,.panel-center,.panel-right{border-right:none;border-bottom:1px solid var(--border)}
-  .metrics-bar{grid-template-columns:1fr 1fr}
-  .metric:nth-child(2){border-right:none}
-  .metric:nth-child(3){border-top:1px solid var(--border)}
+
+.footer-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--border);
 }
-@media(prefers-reduced-motion:reduce){*{transition:none!important}}
+
+/* Animação de sacudida para inputs inválidos */
+@keyframes sacudir{
+  0%,100%{transform:translateX(0)}
+  25%{transform:translateX(-6px)}
+  75%{transform:translateX(6px)}
+}
+
+/* ── Responsivo ── */
+@media(max-width:700px){
+  .page{
+    grid-template-columns:1fr;
+    grid-template-areas:"header""left""right""footer";
+    padding:0 1.25rem;
+  }
+  .col-left{padding-right:0;border-right:none;border-bottom:1px solid var(--border);padding-bottom:2.5rem}
+  .col-right{padding-left:0;padding-top:2rem}
+  .header-tag{display:none}
+}
+
+@media(prefers-reduced-motion:reduce){
+  *{transition:none!important;animation:none!important}
+}
 </style>
 </head>
 <body>
 
-<!-- Topbar -->
-<header class="topbar">
-  <div class="topbar-left">
-    <div class="logo">
-      <span class="logo-mark">IMC</span>
-      <span class="logo-sep">/</span>
-      <span class="logo-title">Avaliação Clínica</span>
+<div class="bg-grid"></div>
+<div class="bg-glow"></div>
+
+<div class="page">
+
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">
+      <span class="header-marca">IMC</span>
+      <span class="header-sub">Body Mass Index</span>
     </div>
-    <span class="topbar-badge">OMS · ABESO 2024</span>
-  </div>
-  <div class="topbar-right">
-    <div class="status-dot"></div>
-    <span class="status-label">Modo profissional</span>
-  </div>
-</header>
+    <span class="header-tag">OMS · 2024</span>
+  </header>
 
-<!-- Layout -->
-<div class="main">
+  <!-- Coluna esquerda -->
+  <div class="col-left">
 
-  <!-- ── Painel esquerdo: entrada ── -->
-  <aside class="panel-left">
-    <div class="panel-header">
-      <span class="panel-title">Dados do paciente</span>
-      <span class="panel-num">01</span>
+    <div>
+      <div class="intro-label">Avaliação corporal</div>
+      <h1 class="intro-title">Calcule seu<br><em>índice de massa</em><br>corporal</h1>
     </div>
-    <div class="panel-body">
 
-      <!-- Identificação -->
-      <div>
-        <div class="section-label">Identificação</div>
-        <div class="field">
-          <label class="field-label" for="pac-nome">Nome</label>
-          <div class="input-wrap">
-            <input class="field-input" type="text" id="pac-nome" placeholder="Nome do paciente" style="font-family:var(--font);font-size:13px"/>
-          </div>
-        </div>
-        <div class="grid2" style="margin-top:.75rem">
-          <div class="field">
-            <label class="field-label" for="pac-idade">Idade
-              <span class="field-hint">anos</span>
-            </label>
-            <div class="input-wrap">
-              <input class="field-input" type="number" id="pac-idade" placeholder="35" min="1" max="120"/>
-            </div>
-          </div>
-          <div class="field">
-            <label class="field-label" for="pac-sexo">Sexo</label>
-            <select class="field-select" id="pac-sexo">
-              <option value="">—</option>
-              <option value="M">Masculino</option>
-              <option value="F">Feminino</option>
-            </select>
-          </div>
-        </div>
+    <!-- Dados de referência rápida -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-val">18,5</span>
+        <span class="stat-label">Mín. normal</span>
       </div>
-
-      <!-- Medidas antropométricas -->
-      <div>
-        <div class="section-label">Medidas antropométricas</div>
-        <div class="field">
-          <label class="field-label" for="peso">Peso corporal
-            <span class="field-hint">kg</span>
-          </label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="peso" placeholder="70.0" min="1" max="400" step="0.1"/>
-            <span class="field-unit">kg</span>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label" for="altura">Estatura
-            <span class="field-hint">cm</span>
-          </label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="altura" placeholder="175" min="50" max="250" step="0.5"/>
-            <span class="field-unit">cm</span>
-          </div>
-        </div>
-        <div class="field">
-          <label class="field-label" for="circ-abd">Circ. abdominal
-            <span class="field-hint">opcional</span>
-          </label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="circ-abd" placeholder="88" min="40" max="200" step="0.5"/>
-            <span class="field-unit">cm</span>
-          </div>
-        </div>
-        <div class="field" style="margin-top:.75rem">
-          <label class="field-label" for="peso-ideal-ref">Peso de referência
-            <span class="field-hint">opcional</span>
-          </label>
-          <div class="input-wrap">
-            <input class="field-input" type="number" id="peso-ideal-ref" placeholder="65.0" min="1" max="300" step="0.1"/>
-            <span class="field-unit">kg</span>
-          </div>
-        </div>
+      <div class="stat">
+        <span class="stat-val">24,9</span>
+        <span class="stat-label">Máx. normal</span>
       </div>
-
-      <!-- Ações -->
-      <div style="display:flex;flex-direction:column;gap:.5rem;margin-top:auto">
-        <button class="btn-calc" onclick="calcular()">
-          Calcular avaliação
-          <span style="font-size:16px">→</span>
-        </button>
-        <button class="btn-sec" onclick="limpar()">
-          ↺ &nbsp;Limpar campos
-        </button>
-      </div>
-
-    </div>
-  </aside>
-
-  <!-- ── Painel central: resultado ── -->
-  <main class="panel-center">
-
-    <!-- Hero com IMC -->
-    <div class="center-hero">
-      <div class="hero-left">
-        <div class="hero-eyebrow" id="hero-eyebrow">Aguardando avaliação</div>
-        <div class="hero-num" id="hero-num">—</div>
-        <div class="hero-unit">kg / m²</div>
-        <div class="hero-classif" id="hero-classif" style="display:none"></div>
-      </div>
-      <div class="hero-silhueta">
-        <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="50" cy="22" r="14" fill="#C8F135"/>
-          <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
-          <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
-          <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
-          <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
-          <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
-          <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
-        </svg>
+      <div class="stat">
+        <span class="stat-val">6</span>
+        <span class="stat-label">Faixas OMS</span>
       </div>
     </div>
 
-    <!-- Métricas secundárias -->
-    <div class="metrics-bar">
-      <div class="metric">
-        <span class="metric-label">Peso ideal</span>
-        <span class="metric-val" id="met-pi">—</span>
-        <span class="metric-sub" id="met-pi-sub">Devine (IMC 22)</span>
-      </div>
-      <div class="metric">
-        <span class="metric-label">Excesso / déficit</span>
-        <span class="metric-val" id="met-exc">—</span>
-        <span class="metric-sub" id="met-exc-sub">em relação ao ideal</span>
-      </div>
-      <div class="metric">
-        <span class="metric-label">Risco cardiovasc.</span>
-        <span class="metric-val" id="met-risco">—</span>
-        <span class="metric-sub" id="met-risco-sub">circ. abdominal</span>
-      </div>
-      <div class="metric">
-        <span class="metric-label">Faixa etária</span>
-        <span class="metric-val" id="met-faixa">—</span>
-        <span class="metric-sub" id="met-faixa-sub">classificação</span>
-      </div>
-    </div>
+    <!-- Formulário -->
+    <div class="form-block">
 
-    <!-- Interpretação clínica -->
-    <div class="interp-section">
-      <div class="interp-title">Interpretação clínica</div>
-      <div class="interp-grid">
-        <div class="interp-card" id="card-conduta">
-          <div class="interp-card-label">Conduta sugerida</div>
-          <div class="interp-card-val" id="val-conduta">—</div>
-        </div>
-        <div class="interp-card" id="card-meta">
-          <div class="interp-card-label">Meta de peso</div>
-          <div class="interp-card-val" id="val-meta">—</div>
-        </div>
-        <div class="interp-card" id="card-circ">
-          <div class="interp-card-label">Circ. abdominal</div>
-          <div class="interp-card-val" id="val-circ">—</div>
-        </div>
-        <div class="interp-card" id="card-obs">
-          <div class="interp-card-label">Observação clínica</div>
-          <div class="interp-card-val" id="val-obs">—</div>
+      <div class="field">
+        <label class="field-label" for="peso">Peso corporal</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="peso"
+                 placeholder="70" min="1" max="300" step="0.1"/>
+          <span class="unit">kg</span>
         </div>
       </div>
-    </div>
 
-    <!-- Espectro segmentado -->
-    <div class="espectro-section">
-      <div class="espectro-label">Espectro IMC — OMS</div>
-      <div class="espectro-track">
-        <div class="seg" id="seg-baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
-        <div class="seg" id="seg-normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
-        <div class="seg" id="seg-sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
-        <div class="seg" id="seg-ob1"    style="background:#FF6B35;color:#FF6B35;width:12.5%"></div>
-        <div class="seg" id="seg-ob2"    style="background:#E63946;color:#E63946;width:12.5%"></div>
-        <div class="seg" id="seg-ob3"    style="background:#9B1D20;color:#9B1D20;width:12.5%"></div>
+      <div class="field">
+        <label class="field-label" for="altura">Altura</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="altura"
+                 placeholder="175" min="50" max="250" step="1"/>
+          <span class="unit">cm</span>
+        </div>
       </div>
-      <div class="espectro-ticks">
-        <div class="tick-group" id="tick-baixo"  style="width:46.25%"><span class="tick-name">Baixo peso</span><span class="tick-range">&lt;18,5</span></div>
-        <div class="tick-group" id="tick-normal" style="width:31.25%"><span class="tick-name">Normal</span><span class="tick-range">18,5–24,9</span></div>
-        <div class="tick-group" id="tick-sobre"  style="width:12.5%"><span class="tick-name">Sobrepeso</span><span class="tick-range">25–29,9</span></div>
-        <div class="tick-group" id="tick-ob1"    style="width:12.5%"><span class="tick-name">Ob. I</span><span class="tick-range">30–34,9</span></div>
-        <div class="tick-group" id="tick-ob2"    style="width:12.5%"><span class="tick-name">Ob. II</span><span class="tick-range">35–39,9</span></div>
-        <div class="tick-group" id="tick-ob3"    style="width:12.5%"><span class="tick-name">Ob. III</span><span class="tick-range">≥40</span></div>
-      </div>
-    </div>
 
-  </main>
-
-  <!-- ── Painel direito: histórico ── -->
-  <aside class="panel-right">
-    <div class="hist-header">
-      <span class="hist-title">Histórico de pacientes</span>
-      <span class="hist-count" id="hist-count">0</span>
-    </div>
-
-    <div class="hist-empty" id="hist-empty">
-      <div class="hist-empty-icon">◌</div>
-      <div class="hist-empty-text">Nenhuma avaliação<br>registrada ainda</div>
-    </div>
-
-    <div class="hist-list" id="hist-list"></div>
-
-    <!-- Input nome para salvar -->
-    <div class="novo-pac">
-      <div class="novo-pac-label">Salvar avaliação atual</div>
-      <button class="btn-sec" onclick="salvarHistorico()" style="margin-top:2px">
-        + &nbsp;Adicionar ao histórico
+      <button class="btn-calcular" onclick="calcular()">
+        Calcular IMC
+        <span class="btn-arrow" aria-hidden="true">→</span>
       </button>
+
+    </div>
+  </div>
+
+  <!-- Coluna direita -->
+  <div class="col-right">
+
+    <!-- Silhueta humana SVG decorativa -->
+    <div class="silhueta-wrap">
+
+      <!-- Linhas de medida -->
+      <div class="medida-linha medida-peso" id="med-peso"></div>
+      <div class="medida-linha medida-altura" id="med-altura"></div>
+
+      <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cabeça -->
+        <circle cx="50" cy="22" r="14" fill="#C8F135"/>
+        <!-- Pescoço -->
+        <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
+        <!-- Torso -->
+        <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
+        <!-- Braço esquerdo -->
+        <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
+        <!-- Braço direito -->
+        <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
+        <!-- Perna esquerda -->
+        <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
+        <!-- Perna direita -->
+        <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
+      </svg>
+
     </div>
 
-  </aside>
+    <!-- Placar do IMC -->
+    <div class="imc-placar" id="imc-placar">
+      <span class="imc-numero" id="imc-val">—</span>
+      <span class="imc-unidade">kg / m²</span>
+      <span class="classificacao-badge" id="imc-badge"></span>
+    </div>
+
+    <!-- Espectro com segmentos por faixa -->
+    <div class="espectro" id="espectro">
+      <div class="espectro-track">
+        <!-- larguras proporcionais ao intervalo de cada faixa (escala 0–40) -->
+        <div class="seg" id="seg-baixo"  data-faixa="baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
+        <div class="seg" id="seg-normal" data-faixa="normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
+        <div class="seg" id="seg-sobre"  data-faixa="sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
+        <div class="seg" id="seg-ob1"    data-faixa="ob1"    style="background:#FF6B35;color:#FF6B35;width:12.5%"></div>
+        <div class="seg" id="seg-ob2"    data-faixa="ob2"    style="background:#E63946;color:#E63946;width:12.5%"></div>
+        <div class="seg" id="seg-ob3"    data-faixa="ob3"    style="background:#9B1D20;color:#9B1D20;width:12.5%"></div>
+      </div>
+      <div class="espectro-labels">
+        <span class="seg-label" id="lbl-baixo"  style="width:46.25%">Baixo</span>
+        <span class="seg-label" id="lbl-normal" style="width:31.25%">Normal</span>
+        <span class="seg-label" id="lbl-sobre"  style="width:12.5%">Sobre</span>
+        <span class="seg-label" id="lbl-ob1"    style="width:12.5%">Ob. I</span>
+        <span class="seg-label" id="lbl-ob2"    style="width:12.5%">Ob. II</span>
+        <span class="seg-label" id="lbl-ob3"    style="width:12.5%">Ob. III</span>
+      </div>
+    </div>
+
+    <!-- Tabela de referência -->
+    <div class="referencia" id="referencia">
+      <div class="ref-titulo">Tabela de referência — OMS</div>
+      <div class="ref-grid">
+        <div class="ref-linha" data-faixa="baixo">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Abaixo do peso</span>
+          <span class="ref-range">&lt; 18,5</span>
+        </div>
+        <div class="ref-linha" data-faixa="normal">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Peso normal</span>
+          <span class="ref-range">18,5 – 24,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="sobre">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Sobrepeso</span>
+          <span class="ref-range">25,0 – 29,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob1">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau I</span>
+          <span class="ref-range">30,0 – 34,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob2">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau II</span>
+          <span class="ref-range">35,0 – 39,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob3">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau III</span>
+          <span class="ref-range">&ge; 40,0</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-copy">Classificação OMS · uso profissional e pessoal</span>
+    <div class="footer-dots">
+      <div class="footer-dot" style="background:var(--c-baixo)"></div>
+      <div class="footer-dot" style="background:var(--c-normal)"></div>
+      <div class="footer-dot" style="background:var(--c-sobre)"></div>
+      <div class="footer-dot" style="background:var(--c-ob1)"></div>
+      <div class="footer-dot" style="background:var(--c-ob2)"></div>
+      <div class="footer-dot" style="background:var(--c-ob3)"></div>
+    </div>
+  </footer>
 
 </div>
 
 <script>
-// ── Dados das faixas ───────────────────────────────────────────────
 var FAIXAS=[
-  {
-    faixa:'baixo', limite:18.5, cor:'#4A9EFF',
-    label:'Abaixo do peso',
-    bgBadge:'rgba(74,158,255,.12)', textBadge:'#4A9EFF', bordBadge:'rgba(74,158,255,.3)',
-    conduta:'Avaliação nutricional. Investigar causas de baixo peso (desnutrição, distúrbios alimentares, doenças crônicas).',
-    obs:'Risco de deficiências nutricionais, osteoporose e imunossupressão.',
-    risco:'Baixo (IMC)'
-  },
-  {
-    faixa:'normal', limite:25, cor:'#C8F135',
-    label:'Eutrófico',
-    bgBadge:'rgba(200,241,53,.1)', textBadge:'#8FAF1E', bordBadge:'rgba(200,241,53,.25)',
-    conduta:'Manutenção do peso. Estimular hábitos saudáveis e prática regular de atividade física.',
-    obs:'Peso adequado. Avaliar composição corporal para análise mais precisa.',
-    risco:'Baixo (IMC)'
-  },
-  {
-    faixa:'sobre', limite:30, cor:'#FFB830',
-    label:'Sobrepeso',
-    bgBadge:'rgba(255,184,48,.1)', textBadge:'#FFB830', bordBadge:'rgba(255,184,48,.25)',
-    conduta:'Intervenção nutricional e aumento da atividade física. Meta de perda de 5–10% do peso corporal.',
-    obs:'Risco aumentado para HAS, dislipidemia e resistência insulínica.',
-    risco:'Moderado'
-  },
-  {
-    faixa:'ob1', limite:35, cor:'#FF6B35',
-    label:'Obesidade grau I',
-    bgBadge:'rgba(255,107,53,.1)', textBadge:'#FF6B35', bordBadge:'rgba(255,107,53,.25)',
-    conduta:'Tratamento multidisciplinar. Avaliar comorbidades. Considerar terapia farmacológica.',
-    obs:'Risco elevado para DM2, apneia do sono e doenças cardiovasculares.',
-    risco:'Alto'
-  },
-  {
-    faixa:'ob2', limite:40, cor:'#E63946',
-    label:'Obesidade grau II',
-    bgBadge:'rgba(230,57,70,.1)', textBadge:'#E63946', bordBadge:'rgba(230,57,70,.25)',
-    conduta:'Tratamento intensivo multidisciplinar. Avaliar elegibilidade para cirurgia bariátrica.',
-    obs:'Risco muito elevado. Investigar síndrome metabólica e doenças associadas.',
-    risco:'Muito alto'
-  },
-  {
-    faixa:'ob3', limite:Infinity, cor:'#FF4C54',
-    label:'Obesidade grau III',
-    bgBadge:'rgba(255,76,84,.1)', textBadge:'#FF4C54', bordBadge:'rgba(255,76,84,.25)',
-    conduta:'Encaminhar para cirurgia bariátrica se elegível. Tratamento multidisciplinar urgente.',
-    obs:'Risco extremamente elevado. Alta mortalidade associada. Intervenção imediata necessária.',
-    risco:'Extremo'
-  },
+  {limite:18.5,cor:'#4A9EFF',label:'Abaixo do peso',faixa:'baixo',bgBadge:'rgba(74,158,255,.15)',textBadge:'#4A9EFF'},
+  {limite:25,  cor:'#C8F135',label:'Peso normal',    faixa:'normal',bgBadge:'rgba(200,241,53,.15)',textBadge:'#8FAF1E'},
+  {limite:30,  cor:'#FFB830',label:'Sobrepeso',       faixa:'sobre',bgBadge:'rgba(255,184,48,.15)',textBadge:'#FFB830'},
+  {limite:35,  cor:'#FF6B35',label:'Obesidade  ·  I', faixa:'ob1',  bgBadge:'rgba(255,107,53,.15)',textBadge:'#FF6B35'},
+  {limite:40,  cor:'#E63946',label:'Obesidade  ·  II',faixa:'ob2',  bgBadge:'rgba(230,57,70,.15)', textBadge:'#E63946'},
+  {limite:Infinity,cor:'#9B1D20',label:'Obesidade  ·  III',faixa:'ob3',bgBadge:'rgba(155,29,32,.15)',textBadge:'#C0484C'},
 ];
 
-var historico=[];
-var ultimoResultado=null;
-
-// ── Peso ideal por Devine ──────────────────────────────────────────
-function pesoIdeal(alturaCm, sexo){
-  var h=alturaCm-152.4;
-  if(sexo==='M') return 50 + 0.906*h;
-  if(sexo==='F') return 45.5 + 0.906*h;
-  return 22*(alturaCm/100)*(alturaCm/100); // fallback IMC 22
-}
-
-// ── Risco cardiovascular por circunferência abdominal ─────────────
-function riscoCirc(circ, sexo){
-  if(!circ||!sexo) return null;
-  if(sexo==='M'){
-    if(circ<94) return {nivel:'Sem risco aumentado', cor:'#C8F135'};
-    if(circ<102) return {nivel:'Risco aumentado', cor:'#FFB830'};
-    return {nivel:'Risco muito aumentado', cor:'#E63946'};
-  } else {
-    if(circ<80) return {nivel:'Sem risco aumentado', cor:'#C8F135'};
-    if(circ<88) return {nivel:'Risco aumentado', cor:'#FFB830'};
-    return {nivel:'Risco muito aumentado', cor:'#E63946'};
-  }
-}
-
-// ── Classificação por faixa etária ────────────────────────────────
-function classificacaoIdade(imc, idade){
-  if(!idade) return null;
-  if(idade<18) return 'Usar curva de crescimento';
-  if(idade>=60){
-    if(imc<22) return 'Baixo peso (idoso)';
-    if(imc<27) return 'Adequado (idoso)';
-    return 'Sobrepeso/Obeso (idoso)';
-  }
-  return null;
-}
-
-// ── Função principal ───────────────────────────────────────────────
 function calcular(){
-  var peso    = parseFloat(document.getElementById('peso').value);
-  var alturaCm= parseFloat(document.getElementById('altura').value);
-  var sexo    = document.getElementById('pac-sexo').value;
-  var idade   = parseFloat(document.getElementById('pac-idade').value);
-  var circ    = parseFloat(document.getElementById('circ-abd').value);
-  var pesoRef = parseFloat(document.getElementById('peso-ideal-ref').value);
+  var peso=parseFloat(document.getElementById('peso').value);
+  var alturaCm=parseFloat(document.getElementById('altura').value);
 
-  if(!peso||!alturaCm||peso<=0||alturaCm<=0){ sacudir(); return; }
+  if(!peso||!alturaCm||peso<=0||alturaCm<=0){
+    sacudir();return;
+  }
 
-  var alturaM = alturaCm/100;
-  var imc     = peso/(alturaM*alturaM);
-  var f       = FAIXAS.find(function(x){ return imc<x.limite; });
+  var alturaM=alturaCm/100;
+  var imc=peso/(alturaM*alturaM);
+  var f=FAIXAS.find(function(x){return imc<x.limite;});
 
-  ultimoResultado={ peso, alturaCm, sexo, idade, circ, imc, f,
-    nome: document.getElementById('pac-nome').value || 'Paciente' };
-
-  // Hero
-  document.getElementById('hero-eyebrow').textContent =
-    document.getElementById('pac-nome').value ?
-    'Avaliação — '+ document.getElementById('pac-nome').value :
-    'Resultado da avaliação';
-
-  var elNum=document.getElementById('hero-num');
+  // Número
+  var elNum=document.getElementById('imc-val');
   elNum.textContent=imc.toFixed(1);
   elNum.style.color=f.cor;
 
-  var elClassif=document.getElementById('hero-classif');
-  elClassif.textContent=f.label;
-  elClassif.style.display='inline-flex';
-  elClassif.style.background=f.bgBadge;
-  elClassif.style.color=f.textBadge;
-  elClassif.style.borderColor=f.bordBadge;
+  // Badge
+  var elBadge=document.getElementById('imc-badge');
+  elBadge.textContent=f.label;
+  elBadge.style.background=f.bgBadge;
+  elBadge.style.color=f.textBadge;
 
-  // Silhueta
-  var svg=document.getElementById('silhueta');
-  svg.classList.add('ativa');
-  svg.querySelectorAll('path,circle,rect').forEach(function(el){el.style.fill=f.cor});
+  // Ativa segmento da faixa correspondente e apaga os demais
+  document.querySelectorAll('.seg').forEach(function(s){s.classList.remove('ativo')});
+  document.querySelectorAll('.seg-label').forEach(function(s){s.classList.remove('ativo')});
+  var segAtivo=document.getElementById('seg-'+f.faixa);
+  var lblAtivo=document.getElementById('lbl-'+f.faixa);
+  if(segAtivo){segAtivo.classList.add('ativo')}
+  if(lblAtivo){lblAtivo.classList.add('ativo');lblAtivo.style.color=f.cor}
 
-  // Métricas
-  var pi = pesoIdeal(alturaCm, sexo);
-  var exc = peso - pi;
-  var excStr = (exc>=0?'+':'')+exc.toFixed(1)+' kg';
-  document.getElementById('met-pi').textContent = pi.toFixed(1)+' kg';
-  document.getElementById('met-pi').style.color = f.cor;
-  document.getElementById('met-pi-sub').textContent = sexo ? 'Fórmula Devine ('+sexo+')' : 'IMC alvo 22';
-
-  document.getElementById('met-exc').textContent = excStr;
-  document.getElementById('met-exc').style.color = exc>0 ? '#FFB830' : exc<0 ? '#4A9EFF' : '#C8F135';
-
-  var rc = riscoCirc(circ, sexo);
-  if(rc){
-    document.getElementById('met-risco').textContent = rc.nivel.split(' ')[0];
-    document.getElementById('met-risco').style.color = rc.cor;
-    document.getElementById('met-risco-sub').textContent = rc.nivel;
-  } else {
-    document.getElementById('met-risco').textContent = '—';
-    document.getElementById('met-risco').style.color = 'var(--muted)';
-    document.getElementById('met-risco-sub').textContent = 'informe circ. e sexo';
+  // Linha ativa na tabela — destaca com a cor da faixa
+  document.querySelectorAll('.ref-linha').forEach(function(l){
+    l.classList.remove('ativa');
+    l.style.background='';
+  });
+  var la=document.querySelector('.ref-linha[data-faixa="'+f.faixa+'"]');
+  if(la){
+    la.classList.add('ativa');
+    la.style.background=f.bgBadge;
   }
 
-  var cf = classificacaoIdade(imc, idade);
-  document.getElementById('met-faixa').textContent = isNaN(idade) ? '—' : (idade<18?'Pediátrico':idade>=60?'Idoso':'Adulto');
-  document.getElementById('met-faixa').style.color = f.cor;
-  document.getElementById('met-faixa-sub').textContent = cf || f.label;
-
-  // Interpretação clínica
-  document.getElementById('val-conduta').textContent = f.conduta;
-  document.getElementById('val-obs').textContent = f.obs;
-
-  // Meta de peso
-  var metaMin=(18.5*alturaM*alturaM).toFixed(1);
-  var metaMax=(24.9*alturaM*alturaM).toFixed(1);
-  var metaRef = !isNaN(pesoRef) ? '\nRef. informada: '+pesoRef.toFixed(1)+' kg' : '';
-  document.getElementById('val-meta').textContent = metaMin+' – '+metaMax+' kg'+metaRef;
-
-  // Circunferência abdominal
-  if(!isNaN(circ) && circ>0){
-    var limM=sexo==='M'?'102 cm':sexo==='F'?'88 cm':'102/88 cm';
-    document.getElementById('val-circ').textContent =
-      circ.toFixed(1)+' cm\n'+(rc ? rc.nivel : '') +
-      '\nLimite OMS: '+limM;
-  } else {
-    document.getElementById('val-circ').textContent = 'Não informada';
-  }
-
-  // Espectro
-  document.querySelectorAll('.seg').forEach(function(s){s.classList.remove('ativo')});
-  document.querySelectorAll('.tick-group').forEach(function(s){s.classList.remove('ativo')});
-  var seg=document.getElementById('seg-'+f.faixa);
-  var tick=document.getElementById('tick-'+f.faixa);
-  if(seg) seg.classList.add('ativo');
-  if(tick) tick.classList.add('ativo');
-
-  // Borda lateral dos cards de interpretação
-  ['card-conduta','card-meta','card-circ','card-obs'].forEach(function(id){
-    document.getElementById(id).style.borderColor=f.bordBadge;
+  // Silhueta ativa
+  document.getElementById('silhueta').classList.add('ativa');
+  document.getElementById('silhueta').style.fill=f.cor;
+  document.querySelectorAll('.silhueta-svg path, .silhueta-svg circle, .silhueta-svg rect').forEach(function(el){
+    el.style.fill=f.cor;
   });
+
+  // Linhas de medida
+  var mp=document.getElementById('med-peso');
+  var ma=document.getElementById('med-altura');
+  mp.textContent=peso+'kg';
+  ma.textContent=alturaCm+'cm';
+  mp.classList.add('vis');
+  ma.classList.add('vis');
+
+  // Mostra elementos com fade
+  document.getElementById('imc-placar').classList.add('vis');
+  document.getElementById('espectro').classList.add('vis');
+  document.getElementById('referencia').classList.add('vis');
 }
 
-// ── Salvar no histórico ────────────────────────────────────────────
-function salvarHistorico(){
-  if(!ultimoResultado){ sacudir(); return; }
-  var r=ultimoResultado;
-  historico.unshift(r);
-  document.getElementById('hist-count').textContent=historico.length;
-  document.getElementById('hist-empty').style.display='none';
-
-  var item=document.createElement('div');
-  item.className='hist-item has-color';
-  item.style.setProperty('--item-cor', r.f.cor);
-  item.style.borderLeft='2px solid '+r.f.cor;
-  item.innerHTML=
-    '<div class="hist-item-top">'+
-      '<span class="hist-item-name">'+r.nome+'</span>'+
-      '<span class="hist-item-imc" style="color:'+r.f.cor+'">'+r.imc.toFixed(1)+'</span>'+
-    '</div>'+
-    '<div class="hist-item-meta">'+
-      (r.peso?r.peso+'kg · ':'')+
-      (r.alturaCm?r.alturaCm+'cm':'')+(r.sexo?' · '+r.sexo:'')+(r.idade?' · '+r.idade+'a':'')+
-    '</div>'+
-    '<span class="hist-item-classif" style="background:'+r.f.bgBadge+';color:'+r.f.textBadge+'">'+r.f.label+'</span>';
-
-  document.getElementById('hist-list').prepend(item);
-}
-
-// ── Limpar campos ──────────────────────────────────────────────────
-function limpar(){
-  ['pac-nome','peso','altura','circ-abd','pac-idade','peso-ideal-ref'].forEach(function(id){
-    document.getElementById(id).value='';
-  });
-  document.getElementById('pac-sexo').value='';
-  ultimoResultado=null;
-  document.getElementById('hero-num').textContent='—';
-  document.getElementById('hero-num').style.color='var(--muted)';
-  document.getElementById('hero-eyebrow').textContent='Aguardando avaliação';
-  document.getElementById('hero-classif').style.display='none';
-  var svg=document.getElementById('silhueta');
-  svg.classList.remove('ativa');
-  svg.querySelectorAll('path,circle,rect').forEach(function(el){el.style.fill='#C8F135'});
-  ['met-pi','met-exc','met-risco','met-faixa'].forEach(function(id){
-    document.getElementById(id).textContent='—';
-    document.getElementById(id).style.color='var(--muted)';
-  });
-  ['val-conduta','val-meta','val-circ','val-obs'].forEach(function(id){
-    document.getElementById(id).textContent='—';
-  });
-  document.querySelectorAll('.seg').forEach(function(s){s.classList.remove('ativo')});
-  document.querySelectorAll('.tick-group').forEach(function(s){s.classList.remove('ativo')});
-  ['card-conduta','card-meta','card-circ','card-obs'].forEach(function(id){
-    document.getElementById(id).style.borderColor='var(--border)';
-  });
-}
-
-// ── Sacudir para erro ──────────────────────────────────────────────
 function sacudir(){
-  var el=document.querySelector('.panel-left .panel-body');
-  el.style.animation='none'; el.offsetHeight;
+  var el=document.querySelector('.form-block');
+  el.style.animation='none';
+  el.offsetHeight;
   el.style.animation='sacudir .35s ease';
 }
 
-var sty=document.createElement('style');
-sty.textContent='@keyframes sacudir{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}';
-document.head.appendChild(sty);
-
-document.addEventListener('keydown',function(e){ if(e.key==='Enter') calcular(); });
+document.addEventListener('keydown',function(e){
+  if(e.key==='Enter')calcular();
+});
 </script>
 </body>
 </html>
