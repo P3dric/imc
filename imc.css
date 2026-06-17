@@ -1,549 +1,444 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
-
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+/* ══════════════════════════════════════════════
+   TOKENS — paleta e tipografia
+   ══════════════════════════════════════════════ */
 
 :root {
-  --bg:           #0B0D11;
-  --surface:      #12151C;
-  --surface-2:    #181C25;
-  --surface-3:    #1E2330;
-  --border:       rgba(255,255,255,.07);
-  --border-hi:    rgba(255,255,255,.14);
+  /* Cores */
+  --bg:          #0D0D0D;   /* fundo principal, quase-preto */
+  --surface:     #161616;   /* superfície dos cards */
+  --border:      #2A2A2A;   /* bordas sutis */
+  --text:        #F0EDE8;   /* texto primário (creme) */
+  --muted:       #666460;   /* texto secundário */
+  --accent:      #C8F135;   /* verde-lima — acento único da marca */
+  --accent-dim:  #8FAF1E;   /* acento mais escuro para texto sobre claro */
 
-  --text:         #EEF0F5;
-  --text-2:       #8B92A5;
-  --text-3:       #4E5668;
+  /* Cores das faixas de IMC */
+  --c-baixo:  #4A9EFF;   /* azul — abaixo do peso */
+  --c-normal: #C8F135;   /* verde-lima — normal (usa o acento) */
+  --c-sobre:  #FFB830;   /* âmbar — sobrepeso */
+  --c-ob1:    #FF6B35;   /* laranja — obesidade I */
+  --c-ob2:    #E63946;   /* vermelho — obesidade II */
+  --c-ob3:    #9B1D20;   /* vermelho escuro — obesidade III */
 
-  --green:        #00D68F;
-  --green-dim:    rgba(0,214,143,.12);
-  --green-glow:   rgba(0,214,143,.20);
+  /* Tipografia */
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body:    'Inter', sans-serif;
 
-  --yellow:       #FFCA28;
-  --yellow-dim:   rgba(255,202,40,.12);
-
-  --orange:       #FF7043;
-  --orange-dim:   rgba(255,112,67,.12);
-
-  --red:          #FF4444;
-  --red-dim:      rgba(255,68,68,.12);
-
-  --blue:         #4E9FFF;
-  --blue-dim:     rgba(78,159,255,.10);
-
-  --mono:         'JetBrains Mono', monospace;
-  --sans:         'Inter', sans-serif;
-
-  --r-sm:         8px;
-  --r-md:         12px;
-  --r-lg:         16px;
+  /* Espaçamento */
+  --gap: 1.5rem;
 }
 
+/* ══════════════════════════════════════════════
+   RESET
+   ══════════════════════════════════════════════ */
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* ══════════════════════════════════════════════
+   BASE
+   ══════════════════════════════════════════════ */
+
 body {
-  font-family: var(--sans);
   background: var(--bg);
   color: var(--text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  /* Centraliza o shell verticalmente com espaçamento generoso */
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  padding: 40px 16px 80px;
-  background-image:
-    radial-gradient(ellipse 60% 40% at 50% 0%, rgba(0,214,143,.06) 0%, transparent 70%);
+  padding: 3rem 1rem 4rem;
 }
 
-/* ════════════════════════════════════════
-   LAYOUT PRINCIPAL
-════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   SHELL — container principal
+   ══════════════════════════════════════════════ */
 
-.app {
+.shell {
   width: 100%;
-  max-width: 520px;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0; /* espaçamento gerido internamente por cada seção */
 }
 
-/* ════════════════════════════════════════
-   HEADER / BADGE
-════════════════════════════════════════ */
+/* ══════════════════════════════════════════════
+   HEADER
+   ══════════════════════════════════════════════ */
 
-.app-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px 4px;
-}
-
-.app-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.brand-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 10px var(--green);
-  animation: pulse 2.4s ease-in-out infinite;
-}
-
-@keyframes pulse {
-  0%, 100% { opacity: 1; box-shadow: 0 0 8px var(--green); }
-  50%       { opacity: .6; box-shadow: 0 0 3px var(--green); }
-}
-
-.brand-name {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: .12em;
-  text-transform: uppercase;
-  color: var(--text-2);
-}
-
-.badge-oms {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--green);
-  background: var(--green-dim);
-  border: 1px solid rgba(0,214,143,.25);
-  padding: 3px 10px;
-  border-radius: 20px;
-  letter-spacing: .04em;
-  font-weight: 500;
-}
-
-/* ════════════════════════════════════════
-   CARD BASE
-════════════════════════════════════════ */
-
-.card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-lg);
-  overflow: hidden;
-}
-
-/* ════════════════════════════════════════
-   CARD: FORMULÁRIO
-════════════════════════════════════════ */
-
-.form-card { padding: 24px; }
-
-.section-label {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  color: var(--text-3);
-  margin-bottom: 16px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.section-label::after {
-  content: '';
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-
-.row-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.field { display: flex; flex-direction: column; gap: 6px; }
-
-.field label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .10em;
-  color: var(--text-3);
-}
-
-.field input {
-  height: 44px;
-  padding: 0 14px;
-  font-family: var(--mono);
-  font-size: 15px;
-  font-weight: 500;
-  background: var(--surface-2);
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  color: var(--text);
-  outline: none;
-  transition: border-color .18s, background .18s;
-  -moz-appearance: textfield;
-}
-
-.field input::-webkit-outer-spin-button,
-.field input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-
-.field input::placeholder { color: var(--text-3); }
-
-.field input:focus {
-  border-color: var(--green);
-  background: rgba(0,214,143,.04);
-  outline: none;
-}
-
-/* Toggle sexo */
-
-.toggle-group {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 6px;
-}
-
-.toggle-btn {
-  height: 44px;
-  border: 1px solid var(--border);
-  border-radius: var(--r-sm);
-  background: var(--surface-2);
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-3);
-  cursor: pointer;
-  transition: all .18s;
-  letter-spacing: .02em;
-  text-transform: uppercase;
-}
-
-.toggle-btn:hover {
-  border-color: var(--border-hi);
-  color: var(--text-2);
-}
-
-.toggle-btn.active {
-  background: var(--green-dim);
-  border-color: rgba(0,214,143,.40);
-  color: var(--green);
-}
-
-/* Botão calcular */
-
-.btn-calc {
-  width: 100%;
-  height: 50px;
-  margin-top: 8px;
-  background: var(--green);
-  color: #0B0D11;
-  border: none;
-  border-radius: var(--r-sm);
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 700;
-  cursor: pointer;
-  letter-spacing: .08em;
-  text-transform: uppercase;
-  transition: opacity .15s, transform .12s, box-shadow .15s;
-  box-shadow: 0 0 24px rgba(0,214,143,.25);
-}
-
-.btn-calc:hover  { opacity: .92; transform: translateY(-1px); box-shadow: 0 4px 28px rgba(0,214,143,.35); }
-.btn-calc:active { opacity: 1; transform: translateY(0); box-shadow: none; }
-
-.error-msg {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--red);
-  background: var(--red-dim);
-  border: 1px solid rgba(255,68,68,.20);
-  border-radius: var(--r-sm);
-  padding: 8px 14px;
-  margin-top: 10px;
-  display: none;
-}
-
-/* ════════════════════════════════════════
-   RESULTADO — oculto por padrão
-════════════════════════════════════════ */
-
-#resultado { display: none; }
-
-/* ════════════════════════════════════════
-   CARD: IMC PRINCIPAL
-════════════════════════════════════════ */
-
-.imc-card {
-  padding: 24px;
-  position: relative;
-  overflow: hidden;
-}
-
-.imc-card::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: radial-gradient(ellipse 80% 60% at 0% 50%, var(--green-glow), transparent 70%);
-  pointer-events: none;
-}
-
-.imc-top {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  margin-bottom: 20px;
-}
-
-.imc-score {
+.header {
   display: flex;
   align-items: baseline;
-  gap: 8px;
-}
-
-.imc-num {
-  font-family: var(--mono);
-  font-size: 64px;
-  font-weight: 600;
-  line-height: 1;
-  color: var(--green);
-  transition: color .35s;
-  letter-spacing: -.02em;
-}
-
-.imc-unit-block {
-  display: flex;
-  flex-direction: column;
-  padding-bottom: 6px;
-}
-
-.imc-unit {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-3);
-  line-height: 1.4;
-}
-
-.imc-right {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 8px;
-}
-
-.imc-classification {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-2);
-  text-align: right;
-  transition: color .35s;
-}
-
-.pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--mono);
-  font-size: 11px;
-  font-weight: 600;
-  padding: 5px 12px;
-  border-radius: 20px;
-  letter-spacing: .04em;
-  text-transform: uppercase;
-}
-
-.pill-dot {
-  width: 5px; height: 5px;
-  border-radius: 50%;
-  background: currentColor;
-}
-
-.pill-green  { background: var(--green-dim);  color: var(--green);  border: 1px solid rgba(0,214,143,.25); }
-.pill-yellow { background: var(--yellow-dim); color: var(--yellow); border: 1px solid rgba(255,202,40,.25); }
-.pill-orange { background: var(--orange-dim); color: var(--orange); border: 1px solid rgba(255,112,67,.25); }
-.pill-red    { background: var(--red-dim);    color: var(--red);    border: 1px solid rgba(255,68,68,.25); }
-
-/* ════════════════════════════════════════
-   BARRA DE IMC
-════════════════════════════════════════ */
-
-.bar-section { padding: 0 24px 24px; }
-
-.bar-track {
-  height: 6px;
-  border-radius: 3px;
-  background: linear-gradient(to right,
-    #3A8FD4 0%,  #3A8FD4 13%,
-    #00D68F 13%, #00D68F 40%,
-    #FFCA28 40%, #FFCA28 57%,
-    #FF7043 57%, #FF7043 71%,
-    #E53935 71%, #E53935 86%,
-    #B71C1C 86%
-  );
-  position: relative;
-  margin-bottom: 10px;
-}
-
-.bar-thumb {
-  position: absolute;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  width: 14px; height: 14px;
-  border-radius: 50%;
-  background: #fff;
-  border: 2px solid var(--bg);
-  box-shadow: 0 0 0 2px #fff, 0 2px 8px rgba(0,0,0,.5);
-  transition: left .45s cubic-bezier(.4,0,.2,1);
-}
-
-.bar-labels {
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-3);
-}
-
-/* ════════════════════════════════════════
-   GRID DE MÉTRICAS
-════════════════════════════════════════ */
-
-.metrics-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.metric-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--r-md);
-  padding: 18px 16px;
-  transition: border-color .18s;
-}
-
-.metric-card:hover { border-color: var(--border-hi); }
-
-.metric-icon {
-  font-size: 18px;
-  margin-bottom: 10px;
-  display: block;
-  opacity: .7;
-}
-
-.metric-label {
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .10em;
-  color: var(--text-3);
-  margin-bottom: 4px;
-}
-
-.metric-val {
-  font-family: var(--mono);
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--text);
-  line-height: 1.1;
-}
-
-.metric-sub {
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-3);
-  margin-top: 4px;
-}
-
-/* ════════════════════════════════════════
-   TABELA OMS
-════════════════════════════════════════ */
-
-.ref-card { padding: 24px; }
-
-.ref-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.ref-table thead th {
-  font-family: var(--mono);
-  font-size: 10px;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: .10em;
-  color: var(--text-3);
-  padding: 0 0 12px;
-  text-align: left;
+  gap: 10px;
+  padding-bottom: 2rem;
+  /* Linha separadora sutil abaixo */
   border-bottom: 1px solid var(--border);
+  margin-bottom: 2rem;
 }
 
-.ref-table thead th:last-child { text-align: right; }
-
-.ref-table tbody tr {
-  border-bottom: 1px solid var(--border);
-  transition: background .15s;
-}
-
-.ref-table tbody tr:last-child { border-bottom: none; }
-.ref-table tbody tr:hover { background: rgba(255,255,255,.02); }
-
-.ref-table td {
-  padding: 10px 0;
+/* Sigla "IMC" em destaque com acento */
+.header-marca {
+  font-family: var(--font-display);
   font-size: 13px;
-  vertical-align: middle;
+  font-weight: 700;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent);
 }
 
-.ref-table td:first-child {
-  font-family: var(--mono);
+/* Subtítulo em inglês — referência técnica/internacional */
+.header-sub {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════
+   SEÇÃO DE FORMULÁRIO
+   ══════════════════════════════════════════════ */
+
+.form-section {
+  margin-bottom: 2.5rem;
+}
+
+/* Linha horizontal com os dois inputs e o divisor "/" */
+.inputs-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+/* ── Campo individual ── */
+.field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Rótulo do campo */
+.field-label {
+  font-family: var(--font-display);
   font-size: 11px;
-  color: var(--text-3);
-  width: 86px;
   font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
 }
 
-.ref-table td:last-child {
-  text-align: right;
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-3);
+/* Wrapper do input + unidade */
+.input-wrap {
+  display: flex;
+  align-items: center;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--surface);
+  transition: border-color 0.2s;
 }
 
-.ref-table tr.active-row { background: rgba(0,214,143,.05); }
-.ref-table tr.active-row td { color: var(--text); font-weight: 600; }
-.ref-table tr.active-row td:first-child { color: var(--green); }
-.ref-table tr.active-row td:last-child  { color: var(--text-2); }
+/* Borda acesa ao focar qualquer input dentro do wrapper */
+.input-wrap:focus-within {
+  border-color: var(--accent);
+}
 
-.dot {
-  display: inline-block;
-  width: 7px; height: 7px;
-  border-radius: 50%;
-  margin-right: 9px;
-  vertical-align: middle;
+/* Input em si — sem border própria */
+.field-input {
+  flex: 1;
+  min-width: 0;
+  height: 48px;
+  padding: 0 10px;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--text);
+  /* Remove setas nativas de input[type=number] */
+  -moz-appearance: textfield;
+}
+.field-input::-webkit-outer-spin-button,
+.field-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+/* Unidade (kg / cm) à direita do input */
+.unit {
+  padding: 0 12px 0 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted);
+  letter-spacing: 0.06em;
   flex-shrink: 0;
 }
 
-/* ════════════════════════════════════════
-   FOOTER
-════════════════════════════════════════ */
-
-.app-footer {
-  text-align: center;
-  font-family: var(--mono);
-  font-size: 10px;
-  color: var(--text-3);
-  letter-spacing: .04em;
-  padding: 4px 0;
+/* Divisor "/" entre os campos */
+.field-divider {
+  font-size: 24px;
+  color: var(--border);
+  padding-bottom: 12px;
+  flex-shrink: 0;
 }
 
-/* ════════════════════════════════════════
-   MOBILE
-════════════════════════════════════════ */
+/* ── Botão calcular ── */
+.btn-calcular {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--accent);
+  color: #0D0D0D; /* texto escuro sobre fundo claro */
+  border: none;
+  border-radius: 4px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+}
 
-@media (max-width: 480px) {
-  body { padding: 0 0 60px; background-image: none; }
-  .app { gap: 0; max-width: 100%; }
-  .app-header { padding: 16px 16px 12px; }
-  .card { border-radius: 0; border-left: none; border-right: none; }
-  .form-card, .imc-card, .bar-section, .ref-card { padding: 20px 16px; }
-  .imc-num { font-size: 52px; }
-  .metrics-grid { grid-template-columns: 1fr 1fr; }
+.btn-calcular:hover  { opacity: 0.88; }
+.btn-calcular:active { transform: scale(0.98); }
+
+/* Seta decorativa no botão */
+.btn-arrow {
+  font-size: 16px;
+  transition: transform 0.2s;
+}
+.btn-calcular:hover .btn-arrow {
+  transform: translateX(3px);
+}
+
+/* ══════════════════════════════════════════════
+   SEÇÃO DE RESULTADO
+   ══════════════════════════════════════════════ */
+
+/* Oculto até o cálculo ser feito */
+.resultado {
+  display: none;
+  flex-direction: column;
+  gap: 1.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 2rem;
+  animation: fadeIn 0.35s ease;
+}
+
+/* Anima a entrada do resultado */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Placar gigante do IMC ── */
+.imc-placar {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+/* Número principal — ocupa quase toda a largura */
+.imc-numero {
+  font-family: var(--font-display);
+  font-size: clamp(64px, 18vw, 96px); /* responsivo */
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.03em;
+  /* Cor definida pelo JS conforme a faixa */
+}
+
+/* Unidade ao lado do número */
+.imc-unidade {
+  font-size: 13px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+  padding-bottom: 8px;
+}
+
+/* ── Badge de classificação ── */
+.classificacao-wrap {
+  display: flex;
+}
+
+.classificacao-badge {
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 5px 14px;
+  border-radius: 2px;
+  /* Fundo e cor definidos pelo JS */
+}
+
+/* ── Espectro / barra de faixas ── */
+.espectro {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Trilha de fundo da barra */
+.espectro-track {
+  position: relative;
+  height: 6px;
+  border-radius: 3px;
+  /* Gradiente de 4 faixas horizontais */
+  background: linear-gradient(
+    to right,
+    var(--c-baixo)  0%   25%,
+    var(--c-normal) 25%  50%,
+    var(--c-sobre)  50%  62.5%,
+    var(--c-ob1)    62.5% 75%,
+    var(--c-ob2)    75%  87.5%,
+    var(--c-ob3)    87.5% 100%
+  );
+  overflow: visible; /* permite o ponteiro sair da trilha */
+}
+
+/* Preenchimento animado (não usado aqui, mantido para variações) */
+.espectro-fill {
+  display: none;
+}
+
+/* Ponteiro triangular na posição do IMC */
+.espectro-pointer {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 16px;
+  background: var(--text);
+  border-radius: 1px;
+  /* Posição left definida pelo JS */
+  transform: translateX(-50%);
+  transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Rótulos das faixas */
+.espectro-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+/* ── Tabela de referência ── */
+.referencia {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+/* Cabeçalho da tabela */
+.ref-titulo {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+/* Grid interno */
+.ref-grid {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Cada linha da tabela */
+.ref-linha {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.15s;
+}
+.ref-linha:last-child {
+  border-bottom: none;
+}
+
+/* Linha destacada quando é a faixa atual do usuário */
+.ref-linha.ativa {
+  background: rgba(200, 241, 53, 0.06); /* leve tint do acento */
+}
+
+/* Quadrado colorido de identificação da faixa */
+.ref-cor {
+  width: 8px;
+  height: 8px;
+  border-radius: 1px;
+  flex-shrink: 0;
+}
+
+/* Cores de cada quadrado por faixa */
+.ref-linha[data-faixa="baixo"]  .ref-cor { background: var(--c-baixo); }
+.ref-linha[data-faixa="normal"] .ref-cor { background: var(--c-normal); }
+.ref-linha[data-faixa="sobre"]  .ref-cor { background: var(--c-sobre); }
+.ref-linha[data-faixa="ob1"]    .ref-cor { background: var(--c-ob1); }
+.ref-linha[data-faixa="ob2"]    .ref-cor { background: var(--c-ob2); }
+.ref-linha[data-faixa="ob3"]    .ref-cor { background: var(--c-ob3); }
+
+/* Nome da classificação */
+.ref-nome {
+  flex: 1;
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* Intervalo numérico — alinhado à direita */
+.ref-range {
+  font-family: var(--font-display);
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.04em;
+}
+
+/* ══════════════════════════════════════════════
+   FOOTER
+   ══════════════════════════════════════════════ */
+
+.footer {
+  margin-top: 3rem;
+  font-size: 11px;
+  color: var(--muted);
+  letter-spacing: 0.06em;
+  text-align: center;
+}
+
+/* ══════════════════════════════════════════════
+   RESPONSIVO — mobile
+   ══════════════════════════════════════════════ */
+
+@media (max-width: 400px) {
+  body { padding: 2rem 1rem 3rem; }
+
+  .inputs-row { gap: 0.5rem; }
+
+  .field-input { font-size: 18px; height: 44px; }
+}
+
+/* ══════════════════════════════════════════════
+   ACESSIBILIDADE — reduz movimento
+   ══════════════════════════════════════════════ */
+
+@media (prefers-reduced-motion: reduce) {
+  .resultado        { animation: none; }
+  .espectro-pointer { transition: none; }
+  .btn-calcular     { transition: none; }
 }

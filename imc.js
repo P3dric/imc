@@ -1,105 +1,93 @@
-let sexo = 'M';
-
-function setSexo(s) {
-  sexo = s;
-  document.getElementById('btn-m').classList.toggle('active', s === 'M');
-  document.getElementById('btn-f').classList.toggle('active', s === 'F');
-}
-
-const FAIXAS = [
-  { min: 0,    max: 16,   label: 'Magreza grau III', risco: 'Muito elevado', cor: '#3A8FD4' },
-  { min: 16,   max: 17,   label: 'Magreza grau II',  risco: 'Elevado',       cor: '#3A8FD4' },
-  { min: 17,   max: 18.5, label: 'Magreza grau I',   risco: 'Moderado',      cor: '#5DB8E0' },
-  { min: 18.5, max: 25,   label: 'Normal',           risco: 'Baixo',         cor: '#00D68F' },
-  { min: 25,   max: 30,   label: 'Sobrepeso',        risco: 'Aumentado',     cor: '#FFCA28' },
-  { min: 30,   max: 35,   label: 'Obesidade I',      risco: 'Moderado',      cor: '#FF7043' },
-  { min: 35,   max: 40,   label: 'Obesidade II',     risco: 'Severo',        cor: '#E53935' },
-  { min: 40,   max: 999,  label: 'Obesidade III',    risco: 'Muito severo',  cor: '#B71C1C' },
+// ── Mapa de faixas de IMC ─────────────────────────────────────────
+// Cada entrada define: limite superior, cor, rótulo, faixa da tabela,
+// cor do badge e cor de texto do badge
+var FAIXAS = [
+  { limite: 18.5, cor: '#4A9EFF', label: 'Abaixo do peso',   faixa: 'baixo',  bgBadge: 'rgba(74,158,255,0.15)',  textBadge: '#4A9EFF' },
+  { limite: 25,   cor: '#C8F135', label: 'Peso normal',       faixa: 'normal', bgBadge: 'rgba(200,241,53,0.15)', textBadge: '#8FAF1E' },
+  { limite: 30,   cor: '#FFB830', label: 'Sobrepeso',          faixa: 'sobre',  bgBadge: 'rgba(255,184,48,0.15)', textBadge: '#FFB830' },
+  { limite: 35,   cor: '#FF6B35', label: 'Obesidade  ·  I',   faixa: 'ob1',    bgBadge: 'rgba(255,107,53,0.15)', textBadge: '#FF6B35' },
+  { limite: 40,   cor: '#E63946', label: 'Obesidade  ·  II',  faixa: 'ob2',    bgBadge: 'rgba(230,57,70,0.15)',  textBadge: '#E63946' },
+  { limite: Infinity, cor: '#9B1D20', label: 'Obesidade  ·  III', faixa: 'ob3', bgBadge: 'rgba(155,29,32,0.15)', textBadge: '#C0484C' },
 ];
 
-function classificar(imc) {
-  return FAIXAS.find(f => imc >= f.min && imc < f.max) || FAIXAS[FAIXAS.length - 1];
-}
-
-function barPos(imc) {
-  return Math.min(97, Math.max(3, (imc - 14) / (42 - 14) * 100));
-}
-
-function calcTMB(peso, altM, idade, sexo) {
-  const cm = altM * 100;
-  if (sexo === 'M') return Math.round(88.36 + 13.4 * peso + 4.8 * cm - 5.7 * idade);
-  return Math.round(447.6 + 9.25 * peso + 3.1 * cm - 4.33 * idade);
-}
-
-function pillClass(faixa) {
-  if (faixa.label === 'Normal') return 'pill-green';
-  if (['Magreza grau I', 'Sobrepeso'].includes(faixa.label)) return 'pill-yellow';
-  if (['Magreza grau II', 'Obesidade I'].includes(faixa.label)) return 'pill-orange';
-  return 'pill-red';
-}
-
+// ── Função principal ───────────────────────────────────────────────
 function calcular() {
-  const peso  = parseFloat(document.getElementById('peso').value);
-  const altCm = parseFloat(document.getElementById('altura').value);
-  const idade = parseInt(document.getElementById('idade').value);
-  const erro  = document.getElementById('erro');
 
-  if (!peso || !altCm || !idade || peso < 1 || altCm < 50 || idade < 2) {
-    erro.style.display = 'block';
+  // Lê e converte os valores dos campos
+  var peso     = parseFloat(document.getElementById('peso').value);
+  var alturaCm = parseFloat(document.getElementById('altura').value);
+
+  // Valida: aborta se faltarem dados ou forem inválidos
+  if (!peso || !alturaCm || peso <= 0 || alturaCm <= 0) {
+    sacudir(); // micro-animação de erro nos inputs
     return;
   }
-  erro.style.display = 'none';
 
-  const altM   = altCm / 100;
-  const imc    = peso / (altM * altM);
-  const faixa  = classificar(imc);
-  const pIdeal = parseFloat((22 * altM * altM).toFixed(1));
-  const pMin   = parseFloat((18.5 * altM * altM).toFixed(1));
-  const pMax   = parseFloat((24.9 * altM * altM).toFixed(1));
-  const diff   = parseFloat((peso - pIdeal).toFixed(1));
-  const tmb    = calcTMB(peso, altM, idade, sexo);
+  // Converte altura de cm para metros
+  var alturaM = alturaCm / 100;
 
-  const res = document.getElementById('resultado');
-  res.style.display = 'block';
+  // Fórmula do IMC: peso (kg) / altura² (m²)
+  var imc = peso / (alturaM * alturaM);
 
-  document.getElementById('imc-num').textContent = imc.toFixed(1);
-  document.getElementById('imc-num').style.color = faixa.cor;
+  // Formata com 1 casa decimal
+  var imcStr = imc.toFixed(1);
 
-  document.getElementById('imc-label').textContent = faixa.label;
-  document.getElementById('imc-label').style.color = faixa.cor;
+  // ── Determina a faixa ──────────────────────────────────────────
+  // Percorre o array até encontrar a primeira faixa cujo limite
+  // seja maior que o IMC calculado
+  var faixaAtual = FAIXAS.find(function(f) { return imc < f.limite; });
 
-  const pill = document.getElementById('imc-pill');
-  pill.innerHTML = `<span class="pill-dot"></span>Risco ${faixa.risco.toLowerCase()}`;
-  pill.className = 'pill ' + pillClass(faixa);
+  // ── Atualiza número grande (placar) ───────────────────────────
+  var elNumero = document.getElementById('imc-val');
+  elNumero.textContent = imcStr;
+  elNumero.style.color = faixaAtual.cor;
 
-  document.getElementById('bar-thumb').style.left = barPos(imc) + '%';
+  // ── Atualiza badge de classificação ───────────────────────────
+  var elBadge = document.getElementById('imc-badge');
+  elBadge.textContent = faixaAtual.label;
+  elBadge.style.background = faixaAtual.bgBadge;
+  elBadge.style.color       = faixaAtual.textBadge;
 
-  document.getElementById('m-ideal').textContent = pIdeal + ' kg';
-  document.getElementById('m-faixa').textContent = pMin + '–' + pMax + ' kg';
+  // ── Move ponteiro no espectro ──────────────────────────────────
+  // Mapeia o IMC para a escala de 0–40 e converte em porcentagem
+  var pct = Math.min((imc / 40) * 100, 100);
+  document.getElementById('imc-pointer').style.left = pct.toFixed(1) + '%';
 
-  const sinal = diff > 0 ? '+' : '';
-  document.getElementById('m-diff').textContent = sinal + diff + ' kg';
-  document.getElementById('m-tmb').textContent = tmb.toLocaleString('pt-BR');
-
-  const tbody = document.querySelector('#ref-table tbody');
-  tbody.innerHTML = '';
-
-  FAIXAS.forEach(f => {
-    const ativo = imc >= f.min && imc < f.max;
-    const faixaStr = f.max >= 999 ? `≥ ${f.min}` : `${f.min}–${f.max}`;
-    const tr = document.createElement('tr');
-    if (ativo) tr.classList.add('active-row');
-    tr.innerHTML = `
-      <td>${faixaStr}</td>
-      <td><span class="dot" style="background:${f.cor}"></span>${f.label}</td>
-      <td>${f.risco}</td>
-    `;
-    tbody.appendChild(tr);
+  // ── Destaca a linha ativa na tabela de referência ─────────────
+  // Remove a classe "ativa" de todas as linhas antes de aplicar
+  document.querySelectorAll('.ref-linha').forEach(function(linha) {
+    linha.classList.remove('ativa');
   });
+  // Adiciona "ativa" apenas na linha correspondente à faixa atual
+  var linhaAtiva = document.querySelector('.ref-linha[data-faixa="' + faixaAtual.faixa + '"]');
+  if (linhaAtiva) linhaAtiva.classList.add('ativa');
 
-  res.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  // ── Exibe o card de resultado (estava display:none) ───────────
+  var elResultado = document.getElementById('resultado');
+  elResultado.style.display = 'flex';
+
+  // Reinicia a animação de entrada a cada novo cálculo
+  elResultado.style.animation = 'none';
+  elResultado.offsetHeight;   // força reflow para reiniciar o keyframe
+  elResultado.style.animation = '';
 }
 
-document.addEventListener('keydown', e => {
+// ── Micro-animação de erro nos inputs ─────────────────────────────
+// Sacude levemente o formulário quando dados estão ausentes/inválidos
+function sacudir() {
+  var row = document.querySelector('.inputs-row');
+  row.style.animation = 'none';
+  row.offsetHeight;
+  row.style.animation = 'sacudir 0.35s ease';
+}
+
+// Injeta o keyframe de sacudida via CSS dinâmico
+var style = document.createElement('style');
+style.textContent = '@keyframes sacudir { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-6px)} 75%{transform:translateX(6px)} }';
+document.head.appendChild(style);
+
+// ── Atalho Enter ──────────────────────────────────────────────────
+// Permite acionar o cálculo sem clicar no botão
+document.addEventListener('keydown', function(e) {
   if (e.key === 'Enter') calcular();
 });
