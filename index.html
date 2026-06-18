@@ -35,385 +35,469 @@ body{
   overflow-x:hidden;
 }
 
-/* ── Fundo ── */
+/* ── Grid de fundo ── */
 .bg-grid{
-  position:fixed;inset:0;pointer-events:none;z-index:0;
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:0;
   background-image:
-    linear-gradient(rgba(200,241,53,.03) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(200,241,53,.03) 1px,transparent 1px);
+    linear-gradient(rgba(200,241,53,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(200,241,53,.03) 1px, transparent 1px);
   background-size:40px 40px;
 }
+
+/* Brilho central sutil */
 .bg-glow{
-  position:fixed;top:-120px;left:50%;transform:translateX(-50%);
-  width:600px;height:400px;pointer-events:none;z-index:0;
-  background:radial-gradient(ellipse at center,rgba(200,241,53,.07) 0%,transparent 70%);
-}
-
-/* ── Wrapper de telas ── */
-.telas{
-  position:relative;z-index:1;
-  width:100%;max-width:960px;
-  overflow:hidden;
-}
-
-/* ── Animação de transição entre telas ── */
-.tela{
-  width:100%;
-  transition:opacity .35s ease, transform .35s ease;
-}
-
-.tela.oculta{
-  opacity:0;
+  position:fixed;
+  top:-120px;
+  left:50%;
+  transform:translateX(-50%);
+  width:600px;
+  height:400px;
+  background:radial-gradient(ellipse at center, rgba(200,241,53,.07) 0%, transparent 70%);
   pointer-events:none;
-  position:absolute;
-  top:0;left:0;
-  transform:translateY(-12px);
+  z-index:0;
 }
 
-.tela.visivel{
-  opacity:1;
-  pointer-events:auto;
-  position:relative;
-  transform:translateY(0);
-}
-
-/* ═══════════════════════════════════════
-   TELA 1 — CALCULADORA
-═══════════════════════════════════════ */
+/* ── Layout ── */
 .page{
+  position:relative;
+  z-index:1;
   width:100%;
+  max-width:960px;
   min-height:100vh;
   display:grid;
   grid-template-columns:1fr 1fr;
   grid-template-rows:auto 1fr auto;
-  grid-template-areas:"header header""left right""footer footer";
+  grid-template-areas:
+    "header  header"
+    "left    right"
+    "footer  footer";
   gap:0;
   padding:0 2rem;
 }
 
-/* Header */
+/* ── Header ── */
 .header{
   grid-area:header;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:2rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:2rem 0 2rem;
   border-bottom:1px solid var(--border);
   margin-bottom:3rem;
 }
-.header-logo{display:flex;align-items:baseline;gap:10px;}
-.header-marca{font-size:13px;font-weight:700;letter-spacing:.2em;color:var(--accent);text-transform:uppercase;}
-.header-sub{font-size:12px;color:var(--muted);letter-spacing:.06em;}
 
-/* Grupo direito do header */
-.header-right{display:flex;align-items:center;gap:10px;}
+.header-logo{
+  display:flex;
+  align-items:baseline;
+  gap:10px;
+}
+
+.header-marca{
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.2em;
+  color:var(--accent);
+  text-transform:uppercase;
+}
+
+.header-sub{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.06em;
+}
 
 .header-tag{
-  font-size:11px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;
-  border:1px solid var(--border);padding:4px 10px;border-radius:2px;
-}
-
-/* Botão Entrar no header */
-.btn-entrar{
-  height:32px;
-  padding:0 16px;
-  background:transparent;
-  border:1px solid var(--border);
-  border-radius:3px;
-  cursor:pointer;
-  font-family:'Space Grotesk',sans-serif;
   font-size:11px;
-  font-weight:700;
-  letter-spacing:.14em;
-  text-transform:uppercase;
   color:var(--muted);
-  display:flex;align-items:center;gap:8px;
-  transition:border-color .2s,color .2s,background .2s;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  border:1px solid var(--border);
+  padding:4px 10px;
+  border-radius:2px;
 }
-.btn-entrar:hover{border-color:var(--accent);color:var(--accent);}
-.btn-entrar svg{transition:transform .2s;}
-.btn-entrar:hover svg{transform:translateX(3px);}
 
-/* Coluna esquerda */
+/* ── Coluna esquerda — formulário ── */
 .col-left{
   grid-area:left;
-  padding-right:3rem;padding-bottom:4rem;
+  padding-right:3rem;
+  padding-bottom:4rem;
   border-right:1px solid var(--border);
-  display:flex;flex-direction:column;gap:2.5rem;
+  display:flex;
+  flex-direction:column;
+  gap:2.5rem;
 }
-.intro-label{font-size:11px;font-weight:500;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:.5rem;}
-.intro-title{font-size:28px;font-weight:700;line-height:1.15;letter-spacing:-.02em;}
-.intro-title em{color:var(--accent);font-style:normal;}
 
+/* Intro text */
+.intro-label{
+  font-size:11px;
+  font-weight:500;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-bottom:.5rem;
+}
+
+.intro-title{
+  font-size:28px;
+  font-weight:700;
+  line-height:1.15;
+  letter-spacing:-.02em;
+}
+
+.intro-title em{
+  color:var(--accent);
+  font-style:normal;
+}
+
+/* Bloco de métricas rápidas */
 .stats-row{
-  display:grid;grid-template-columns:1fr 1fr 1fr;
-  gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:1px;
+  background:var(--border);
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
 }
-.stat{background:var(--surface);padding:.75rem 1rem;display:flex;flex-direction:column;gap:2px;}
-.stat-val{font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-.02em;}
-.stat-label{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;}
 
-.form-block{display:flex;flex-direction:column;gap:1rem;}
-.field{display:flex;flex-direction:column;gap:7px;}
-.field-label{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
+.stat{
+  background:var(--surface);
+  padding:.75rem 1rem;
+  display:flex;
+  flex-direction:column;
+  gap:2px;
+}
+
+.stat-val{
+  font-size:18px;
+  font-weight:700;
+  color:var(--accent);
+  letter-spacing:-.02em;
+}
+
+.stat-label{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+/* Formulário */
+.form-block{
+  display:flex;
+  flex-direction:column;
+  gap:1rem;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:7px;
+}
+
+.field-label{
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+}
 
 .input-wrap{
-  display:flex;align-items:center;
-  background:var(--surface);border:1px solid var(--border);border-radius:4px;transition:border-color .2s;
+  display:flex;
+  align-items:center;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  transition:border-color .2s;
 }
-.input-wrap:focus-within{border-color:var(--accent);}
+
+.input-wrap:focus-within{
+  border-color:var(--accent);
+}
 
 .field-input{
-  flex:1;min-width:0;height:52px;padding:0 14px;
-  background:transparent;border:none;outline:none;
-  font-family:'Space Grotesk',sans-serif;font-size:24px;font-weight:500;color:var(--text);
-  -moz-appearance:textfield;
+  flex:1;
+  min-width:0;
+  height:52px;
+  padding:0 14px;
+  background:transparent;
+  border:none;
+  outline:none;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:24px;
+  font-weight:500;
+  color:var(--text);
+  moz-appearance:textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button{-webkit-appearance:none}
 .field-input::placeholder{color:var(--border)}
 
-.unit{padding:0 14px 0 4px;font-size:12px;font-weight:500;color:var(--muted);letter-spacing:.06em;flex-shrink:0;}
+.unit{
+  padding:0 14px 0 4px;
+  font-size:12px;
+  font-weight:500;
+  color:var(--muted);
+  letter-spacing:.06em;
+  flex-shrink:0;
+}
 
 .btn-calcular{
-  height:52px;width:100%;background:var(--accent);color:#0D0D0D;
-  border:none;border-radius:4px;cursor:pointer;
-  font-family:'Space Grotesk',sans-serif;font-size:13px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  transition:opacity .15s,transform .1s;margin-top:.25rem;
+  height:52px;
+  width:100%;
+  background:var(--accent);
+  color:#0D0D0D;
+  border:none;
+  border-radius:4px;
+  font-family:'Space Grotesk',sans-serif;
+  font-size:13px;
+  font-weight:700;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  transition:opacity .15s, transform .1s;
+  margin-top:.25rem;
 }
 .btn-calcular:hover{opacity:.85}
 .btn-calcular:active{transform:scale(.98)}
-.btn-arrow{font-size:18px;transition:transform .2s;}
+
+.btn-arrow{
+  font-size:18px;
+  transition:transform .2s;
+}
 .btn-calcular:hover .btn-arrow{transform:translateX(4px)}
 
-/* Coluna direita */
+/* ── Coluna direita — silhueta + resultado ── */
 .col-right{
-  grid-area:right;padding-left:3rem;padding-bottom:4rem;
-  display:flex;flex-direction:column;align-items:center;gap:2rem;position:relative;
+  grid-area:right;
+  padding-left:3rem;
+  padding-bottom:4rem;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:2rem;
+  position:relative;
 }
-.silhueta-wrap{position:relative;width:100%;display:flex;justify-content:center;}
-.silhueta-svg{width:140px;opacity:.18;transition:opacity .4s;}
-.silhueta-svg.ativa{opacity:.55;}
 
+/* Silhueta SVG do corpo humano */
+.silhueta-wrap{
+  position:relative;
+  width:100%;
+  display:flex;
+  justify-content:center;
+}
+
+.silhueta-svg{
+  width:140px;
+  opacity:.18;
+  transition:opacity .4s;
+}
+
+.silhueta-svg.ativa{
+  opacity:.55;
+}
+
+/* Linhas de medida decorativas ao lado da silhueta */
 .medida-linha{
-  position:absolute;right:calc(50% - 90px);
-  display:flex;align-items:center;gap:6px;
-  font-size:10px;color:var(--muted);letter-spacing:.06em;
-  opacity:0;transition:opacity .4s .2s;
+  position:absolute;
+  right:calc(50% - 90px);
+  display:flex;
+  align-items:center;
+  gap:6px;
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:.06em;
+  opacity:0;
+  transition:opacity .4s .2s;
 }
 .medida-linha.vis{opacity:1}
-.medida-linha::before{content:'';display:block;width:20px;height:1px;background:var(--border);}
+.medida-linha::before{
+  content:'';
+  display:block;
+  width:20px;
+  height:1px;
+  background:var(--border);
+}
+
 .medida-peso{top:38%}
 .medida-altura{top:60%}
 
+/* Placar do IMC */
 .imc-placar{
-  display:flex;flex-direction:column;align-items:center;gap:4px;
-  opacity:0;transform:translateY(8px);transition:opacity .4s,transform .4s;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:4px;
+  opacity:0;
+  transform:translateY(8px);
+  transition:opacity .4s, transform .4s;
 }
 .imc-placar.vis{opacity:1;transform:translateY(0)}
-.imc-numero{font-size:clamp(56px,12vw,88px);font-weight:700;line-height:1;letter-spacing:-.04em;transition:color .3s;}
-.imc-unidade{font-size:12px;color:var(--muted);letter-spacing:.08em;}
-.classificacao-badge{
-  display:inline-block;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
-  padding:5px 14px;border-radius:2px;margin-top:.25rem;
+
+.imc-numero{
+  font-size:clamp(56px,12vw,88px);
+  font-weight:700;
+  line-height:1;
+  letter-spacing:-.04em;
+  transition:color .3s;
 }
 
-.espectro{width:100%;display:flex;flex-direction:column;gap:8px;opacity:0;transition:opacity .4s .15s;}
-.espectro.vis{opacity:1}
-.espectro-track{position:relative;display:flex;gap:3px;align-items:center;overflow:visible;}
-.seg{height:5px;border-radius:3px;opacity:.22;transition:opacity .4s,height .35s,box-shadow .35s;flex-shrink:0;}
-.seg.ativo{opacity:1;height:10px;box-shadow:0 0 8px currentColor;}
-.espectro-labels{display:flex;gap:3px;font-size:9px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase;}
-.seg-label{text-align:center;transition:color .3s;}
-.seg-label.ativo{color:var(--text);}
+.imc-unidade{
+  font-size:12px;
+  color:var(--muted);
+  letter-spacing:.08em;
+}
 
-.referencia{width:100%;border:1px solid var(--border);border-radius:4px;overflow:hidden;opacity:0;transition:opacity .4s .25s;}
+.classificacao-badge{
+  display:inline-block;
+  font-size:10px;
+  font-weight:700;
+  letter-spacing:.18em;
+  text-transform:uppercase;
+  padding:5px 14px;
+  border-radius:2px;
+  margin-top:.25rem;
+}
+
+/* Espectro */
+.espectro{
+  width:100%;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  opacity:0;
+  transition:opacity .4s .15s;
+}
+.espectro.vis{opacity:1}
+
+.espectro-track{
+  position:relative;
+  display:flex;
+  gap:3px;
+  align-items:center;
+  overflow:visible;
+}
+
+/* Cada segmento da barra representa uma faixa */
+.seg{
+  height:5px;
+  border-radius:3px;
+  opacity:.22;
+  transition:opacity .4s, height .35s, box-shadow .35s;
+  flex-shrink:0;
+}
+
+/* Segmento ativo: mais alto, opaco e com brilho */
+.seg.ativo{
+  opacity:1;
+  height:10px;
+  box-shadow:0 0 8px currentColor;
+}
+
+.espectro-pointer{
+  display:none; /* substituído pelos segmentos */
+}
+
+.espectro-labels{
+  display:flex;
+  gap:3px;
+  font-size:9px;
+  color:var(--muted);
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+/* Cada label alinha com seu segmento */
+.seg-label{
+  text-align:center;
+  transition:color .3s;
+}
+.seg-label.ativo{
+  color:var(--text);
+}
+
+/* Tabela de referência */
+.referencia{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .4s .25s;
+}
 .referencia.vis{opacity:1}
-.ref-titulo{font-size:9px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);padding:8px 12px;border-bottom:1px solid var(--border);background:var(--surface);}
-.ref-linha{display:flex;align-items:center;gap:9px;padding:8px 12px;border-bottom:1px solid var(--border);transition:background .2s;}
+
+.ref-titulo{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+
+.ref-linha{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  transition:background .2s;
+}
 .ref-linha:last-child{border-bottom:none}
-.ref-cor{width:7px;height:7px;border-radius:1px;flex-shrink:0;}
+.ref-linha.ativa{background:rgba(200,241,53,.06)}
+
+.ref-cor{
+  width:7px;height:7px;border-radius:1px;flex-shrink:0;
+}
 .ref-linha[data-faixa="baixo"]  .ref-cor{background:var(--c-baixo)}
 .ref-linha[data-faixa="normal"] .ref-cor{background:var(--c-normal)}
 .ref-linha[data-faixa="sobre"]  .ref-cor{background:var(--c-sobre)}
 .ref-linha[data-faixa="ob1"]    .ref-cor{background:var(--c-ob1)}
 .ref-linha[data-faixa="ob2"]    .ref-cor{background:var(--c-ob2)}
 .ref-linha[data-faixa="ob3"]    .ref-cor{background:var(--c-ob3)}
+
 .ref-nome{flex:1;font-size:12px;color:var(--text)}
 .ref-range{font-size:11px;color:var(--muted);letter-spacing:.04em}
 
-/* Footer calculadora */
+/* ── Footer ── */
 .footer{
-  grid-area:footer;border-top:1px solid var(--border);padding:1.25rem 0;
-  display:flex;align-items:center;justify-content:space-between;
-}
-.footer-copy{font-size:11px;color:var(--muted);letter-spacing:.06em;}
-.footer-dots{display:flex;gap:6px;}
-.footer-dot{width:6px;height:6px;border-radius:50%;}
-
-/* ═══════════════════════════════════════
-   TELA 2 — LOGIN
-═══════════════════════════════════════ */
-.login-page{
-  width:100%;min-height:100vh;
-  display:flex;flex-direction:column;
-  padding:0 2rem;
+  grid-area:footer;
+  border-top:1px solid var(--border);
+  padding:1.25rem 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
 }
 
-/* Header login (mesmo visual) */
-.login-header{
-  display:flex;align-items:center;justify-content:space-between;
-  padding:2rem 0;
-  border-bottom:1px solid var(--border);
-  margin-bottom:3rem;
-  flex-shrink:0;
+.footer-copy{
+  font-size:11px;
+  color:var(--muted);
+  letter-spacing:.06em;
 }
 
-/* Botão voltar */
-.btn-voltar{
-  height:32px;padding:0 16px;
-  background:transparent;border:1px solid var(--border);border-radius:3px;
-  cursor:pointer;font-family:'Space Grotesk',sans-serif;
-  font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
-  color:var(--muted);display:flex;align-items:center;gap:8px;
-  transition:border-color .2s,color .2s;
-}
-.btn-voltar:hover{border-color:var(--accent);color:var(--accent);}
-.btn-voltar svg{transition:transform .2s;}
-.btn-voltar:hover svg{transform:translateX(-3px);}
-
-/* Container do formulário de login centralizado */
-.login-center{
-  flex:1;display:flex;align-items:center;justify-content:center;padding-bottom:4rem;
+.footer-dots{
+  display:flex;
+  gap:6px;
 }
 
-.login-root{
-  display:grid;grid-template-columns:1fr 1fr;
-  width:100%;max-width:760px;
-  min-height:500px;
-  border:1px solid var(--border);border-radius:6px;overflow:hidden;
+.footer-dot{
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--border);
 }
 
-/* Painel esquerdo login */
-.panel-left{
-  background:#111;padding:2.5rem 2rem;
-  display:flex;flex-direction:column;justify-content:space-between;
-  border-right:1px solid var(--border);position:relative;overflow:hidden;
-}
-.panel-left::before{
-  content:'';position:absolute;inset:0;pointer-events:none;
-  background-image:linear-gradient(rgba(200,241,53,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(200,241,53,.04) 1px,transparent 1px);
-  background-size:32px 32px;
-}
-.left-top{position:relative;z-index:1;}
-.l-brand{font-size:11px;font-weight:700;letter-spacing:.22em;color:var(--accent);text-transform:uppercase;margin-bottom:2rem;}
-.l-title{font-size:22px;font-weight:700;letter-spacing:-.02em;color:var(--text);line-height:1.2;margin-bottom:.75rem;}
-.l-title em{color:var(--accent);font-style:normal;}
-.l-sub{font-size:13px;color:var(--muted);line-height:1.6;}
-
-.l-stat-grid{
-  display:grid;grid-template-columns:1fr 1fr;
-  gap:1px;background:var(--border);border:1px solid var(--border);border-radius:4px;overflow:hidden;margin-top:1.5rem;
-}
-.l-stat{background:#161616;padding:.65rem 1rem;display:flex;flex-direction:column;gap:2px;}
-.l-stat-val{font-size:18px;font-weight:700;color:var(--accent);letter-spacing:-.02em;}
-.l-stat-lbl{font-size:9px;color:var(--muted);letter-spacing:.1em;text-transform:uppercase;}
-
-.left-bottom{position:relative;z-index:1;}
-
-.pro-btn{
-  width:100%;height:40px;background:transparent;
-  border:1px solid var(--border);border-radius:4px;cursor:pointer;
-  font-family:'Space Grotesk',sans-serif;font-size:11px;font-weight:700;
-  letter-spacing:.16em;text-transform:uppercase;color:var(--muted);
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:border-color .2s,color .2s,background .2s;
-}
-.pro-btn:hover{border-color:var(--accent);color:var(--accent);}
-.pro-btn.ativo{border-color:var(--accent);color:var(--accent);background:rgba(200,241,53,.06);}
-
-.pro-badge{
-  font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;
-  background:rgba(200,241,53,.12);color:var(--accent);border-radius:2px;padding:2px 6px;
-}
-
-.features{margin-top:1rem;display:flex;flex-direction:column;gap:.4rem;}
-.feat{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted);}
-.feat-check{color:var(--accent);font-size:13px;flex-shrink:0;}
-
-/* Painel direito login */
-.panel-right{
-  background:var(--surface);padding:2.5rem 2rem;
-  display:flex;flex-direction:column;justify-content:center;gap:1.4rem;
-}
-.r-header{display:flex;flex-direction:column;gap:4px;}
-.r-title{font-size:16px;font-weight:700;color:var(--text);letter-spacing:-.01em;}
-.r-sub{font-size:12px;color:var(--muted);}
-
-.l-field{display:flex;flex-direction:column;gap:6px;}
-.l-field-lbl{font-size:10px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);}
-
-.l-input-wrap{
-  display:flex;align-items:center;
-  background:#111;border:1px solid var(--border);border-radius:4px;transition:border-color .2s;
-}
-.l-input-wrap:focus-within{border-color:var(--accent);}
-.l-icon{padding:0 11px;color:var(--muted);flex-shrink:0;display:flex;align-items:center;}
-
-.l-inp{
-  flex:1;height:42px;padding:0 11px 0 0;
-  background:transparent;border:none;outline:none;
-  font-family:'Space Grotesk',sans-serif;font-size:14px;color:var(--text);
-}
-.l-inp::placeholder{color:#333;}
-.l-inp[type=password]{letter-spacing:.1em;}
-
-.extra-fields{
-  display:flex;flex-direction:column;gap:1rem;
-  overflow:hidden;max-height:0;opacity:0;
-  transition:max-height .45s cubic-bezier(.4,0,.2,1),opacity .35s ease;
-}
-.extra-fields.aberto{max-height:220px;opacity:1;}
-
-.l-select-wrap{
-  display:flex;align-items:center;
-  background:#111;border:1px solid var(--border);border-radius:4px;transition:border-color .2s;
-}
-.l-select-wrap:focus-within{border-color:var(--accent);}
-.l-sel{
-  flex:1;height:42px;padding:0 11px 0 0;
-  background:transparent;border:none;outline:none;
-  font-family:'Space Grotesk',sans-serif;font-size:13px;color:var(--text);
-  -webkit-appearance:none;appearance:none;cursor:pointer;
-}
-.l-sel option{background:#1a1a1a;color:var(--text);}
-
-.btn-login{
-  height:42px;width:100%;background:var(--accent);border:none;border-radius:4px;cursor:pointer;
-  font-family:'Space Grotesk',sans-serif;font-size:12px;font-weight:700;letter-spacing:.16em;text-transform:uppercase;
-  color:#0D0D0D;display:flex;align-items:center;justify-content:center;gap:8px;
-  transition:opacity .15s,transform .1s;
-}
-.btn-login:hover{opacity:.85;}
-.btn-login:active{transform:scale(.98);}
-
-.l-divider{display:flex;align-items:center;gap:10px;}
-.l-div-line{flex:1;height:1px;background:var(--border);}
-.l-div-txt{font-size:10px;color:var(--muted);letter-spacing:.08em;text-transform:uppercase;flex-shrink:0;}
-
-.oauth-row{display:flex;gap:8px;}
-.oauth-btn{
-  flex:1;height:36px;background:#111;border:1px solid var(--border);border-radius:4px;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;gap:6px;
-  font-family:'Space Grotesk',sans-serif;font-size:11px;color:var(--muted);
-  transition:border-color .2s,color .2s;
-}
-.oauth-btn:hover{border-color:#444;color:var(--text);}
-
-.l-footer{display:flex;justify-content:space-between;align-items:center;}
-.l-foot-link{font-size:11px;color:var(--muted);cursor:pointer;background:none;border:none;font-family:'Space Grotesk',sans-serif;transition:color .2s;}
-.l-foot-link:hover{color:var(--accent);}
-
-/* ── Animações ── */
+/* Animação de sacudida para inputs inválidos */
 @keyframes sacudir{
   0%,100%{transform:translateX(0)}
   25%{transform:translateX(-6px)}
@@ -422,12 +506,13 @@ body{
 
 /* ── Responsivo ── */
 @media(max-width:700px){
-  .page{grid-template-columns:1fr;grid-template-areas:"header""left""right""footer";padding:0 1.25rem;}
+  .page{
+    grid-template-columns:1fr;
+    grid-template-areas:"header""left""right""footer";
+    padding:0 1.25rem;
+  }
   .col-left{padding-right:0;border-right:none;border-bottom:1px solid var(--border);padding-bottom:2.5rem}
   .col-right{padding-left:0;padding-top:2rem}
-  .login-root{grid-template-columns:1fr;}
-  .panel-left{border-right:none;border-bottom:1px solid var(--border);}
-  .login-page{padding:0 1.25rem;}
   .header-tag{display:none}
 }
 
@@ -441,334 +526,215 @@ body{
 <div class="bg-grid"></div>
 <div class="bg-glow"></div>
 
-<div class="telas">
+<div class="page">
 
-  <!-- ══════════════════════════════
-       TELA 1 — CALCULADORA
-  ══════════════════════════════ -->
-  <div class="tela visivel" id="tela-calc">
-    <div class="page">
+  <!-- Header -->
+  <header class="header">
+    <div class="header-logo">
+      <span class="header-marca">IMC</span>
+      <span class="header-sub">Body Mass Index</span>
+    </div>
+    <span class="header-tag">OMS · 2024</span>
+  </header>
 
-      <header class="header">
-        <div class="header-logo">
-          <span class="header-marca">IMC</span>
-          <span class="header-sub">Body Mass Index</span>
-        </div>
-        <div class="header-right">
-          <span class="header-tag">OMS · 2024</span>
-          <button class="btn-entrar" onclick="irLogin()">
-            Entrar
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </button>
-        </div>
-      </header>
+  <!-- Coluna esquerda -->
+  <div class="col-left">
 
-      <div class="col-left">
-        <div>
-          <div class="intro-label">Avaliação corporal</div>
-          <h1 class="intro-title">Calcule seu<br><em>índice de massa</em><br>corporal</h1>
-        </div>
+    <div>
+      <div class="intro-label">Avaliação corporal</div>
+      <h1 class="intro-title">Calcule seu<br><em>índice de massa</em><br>corporal</h1>
+    </div>
 
-        <div class="stats-row">
-          <div class="stat"><span class="stat-val">18,5</span><span class="stat-label">Mín. normal</span></div>
-          <div class="stat"><span class="stat-val">24,9</span><span class="stat-label">Máx. normal</span></div>
-          <div class="stat"><span class="stat-val">6</span><span class="stat-label">Faixas OMS</span></div>
-        </div>
+    <!-- Dados de referência rápida -->
+    <div class="stats-row">
+      <div class="stat">
+        <span class="stat-val">18,5</span>
+        <span class="stat-label">Mín. normal</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">24,9</span>
+        <span class="stat-label">Máx. normal</span>
+      </div>
+      <div class="stat">
+        <span class="stat-val">6</span>
+        <span class="stat-label">Faixas OMS</span>
+      </div>
+    </div>
 
-        <div class="form-block">
-          <div class="field">
-            <label class="field-label" for="peso">Peso corporal</label>
-            <div class="input-wrap">
-              <input class="field-input" type="number" id="peso" placeholder="70" min="1" max="300" step="0.1"/>
-              <span class="unit">kg</span>
-            </div>
-          </div>
-          <div class="field">
-            <label class="field-label" for="altura">Altura</label>
-            <div class="input-wrap">
-              <input class="field-input" type="number" id="altura" placeholder="175" min="50" max="250" step="1"/>
-              <span class="unit">cm</span>
-            </div>
-          </div>
-          <button class="btn-calcular" onclick="calcular()">
-            Calcular IMC
-            <span class="btn-arrow" aria-hidden="true">→</span>
-          </button>
+    <!-- Formulário -->
+    <div class="form-block">
+
+      <div class="field">
+        <label class="field-label" for="peso">Peso corporal</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="peso"
+                 placeholder="70" min="1" max="300" step="0.1"/>
+          <span class="unit">kg</span>
         </div>
       </div>
 
-      <div class="col-right">
-        <div class="silhueta-wrap">
-          <div class="medida-linha medida-peso" id="med-peso"></div>
-          <div class="medida-linha medida-altura" id="med-altura"></div>
-          <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="50" cy="22" r="14" fill="#C8F135"/>
-            <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
-            <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
-            <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
-            <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
-            <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
-            <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
-          </svg>
-        </div>
-
-        <div class="imc-placar" id="imc-placar">
-          <span class="imc-numero" id="imc-val">—</span>
-          <span class="imc-unidade">kg / m²</span>
-          <span class="classificacao-badge" id="imc-badge"></span>
-        </div>
-
-        <div class="espectro" id="espectro">
-          <div class="espectro-track">
-            <div class="seg" id="seg-baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
-            <div class="seg" id="seg-normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
-            <div class="seg" id="seg-sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
-            <div class="seg" id="seg-ob1"    style="background:#FF6B35;color:#FF6B35;width:12.5%"></div>
-            <div class="seg" id="seg-ob2"    style="background:#E63946;color:#E63946;width:12.5%"></div>
-            <div class="seg" id="seg-ob3"    style="background:#9B1D20;color:#9B1D20;width:12.5%"></div>
-          </div>
-          <div class="espectro-labels">
-            <span class="seg-label" id="lbl-baixo"  style="width:46.25%">Baixo</span>
-            <span class="seg-label" id="lbl-normal" style="width:31.25%">Normal</span>
-            <span class="seg-label" id="lbl-sobre"  style="width:12.5%">Sobre</span>
-            <span class="seg-label" id="lbl-ob1"    style="width:12.5%">Ob. I</span>
-            <span class="seg-label" id="lbl-ob2"    style="width:12.5%">Ob. II</span>
-            <span class="seg-label" id="lbl-ob3"    style="width:12.5%">Ob. III</span>
-          </div>
-        </div>
-
-        <div class="referencia" id="referencia">
-          <div class="ref-titulo">Tabela de referência — OMS</div>
-          <div>
-            <div class="ref-linha" data-faixa="baixo"><div class="ref-cor"></div><span class="ref-nome">Abaixo do peso</span><span class="ref-range">&lt; 18,5</span></div>
-            <div class="ref-linha" data-faixa="normal"><div class="ref-cor"></div><span class="ref-nome">Peso normal</span><span class="ref-range">18,5 – 24,9</span></div>
-            <div class="ref-linha" data-faixa="sobre"><div class="ref-cor"></div><span class="ref-nome">Sobrepeso</span><span class="ref-range">25,0 – 29,9</span></div>
-            <div class="ref-linha" data-faixa="ob1"><div class="ref-cor"></div><span class="ref-nome">Obesidade grau I</span><span class="ref-range">30,0 – 34,9</span></div>
-            <div class="ref-linha" data-faixa="ob2"><div class="ref-cor"></div><span class="ref-nome">Obesidade grau II</span><span class="ref-range">35,0 – 39,9</span></div>
-            <div class="ref-linha" data-faixa="ob3"><div class="ref-cor"></div><span class="ref-nome">Obesidade grau III</span><span class="ref-range">&ge; 40,0</span></div>
-          </div>
+      <div class="field">
+        <label class="field-label" for="altura">Altura</label>
+        <div class="input-wrap">
+          <input class="field-input" type="number" id="altura"
+                 placeholder="175" min="50" max="250" step="1"/>
+          <span class="unit">cm</span>
         </div>
       </div>
 
-      <footer class="footer">
-        <span class="footer-copy">Classificação OMS · uso profissional e pessoal</span>
-        <div class="footer-dots">
-          <div class="footer-dot" style="background:var(--c-baixo)"></div>
-          <div class="footer-dot" style="background:var(--c-normal)"></div>
-          <div class="footer-dot" style="background:var(--c-sobre)"></div>
-          <div class="footer-dot" style="background:var(--c-ob1)"></div>
-          <div class="footer-dot" style="background:var(--c-ob2)"></div>
-          <div class="footer-dot" style="background:var(--c-ob3)"></div>
-        </div>
-      </footer>
+      <button class="btn-calcular" onclick="calcular()">
+        Calcular IMC
+        <span class="btn-arrow" aria-hidden="true">→</span>
+      </button>
 
     </div>
   </div>
 
-  <!-- ══════════════════════════════
-       TELA 2 — LOGIN
-  ══════════════════════════════ -->
-  <div class="tela oculta" id="tela-login">
-    <div class="login-page">
+  <!-- Coluna direita -->
+  <div class="col-right">
 
-      <header class="login-header">
-        <div class="header-logo">
-          <span class="header-marca">IMC</span>
-          <span class="header-sub">Body Mass Index</span>
+    <!-- Silhueta humana SVG decorativa -->
+    <div class="silhueta-wrap">
+
+      <!-- Linhas de medida -->
+      <div class="medida-linha medida-peso" id="med-peso"></div>
+      <div class="medida-linha medida-altura" id="med-altura"></div>
+
+      <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cabeça -->
+        <circle cx="50" cy="22" r="14" fill="#C8F135"/>
+        <!-- Pescoço -->
+        <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
+        <!-- Torso -->
+        <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
+        <!-- Braço esquerdo -->
+        <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
+        <!-- Braço direito -->
+        <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
+        <!-- Perna esquerda -->
+        <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
+        <!-- Perna direita -->
+        <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
+      </svg>
+
+    </div>
+
+    <!-- Placar do IMC -->
+    <div class="imc-placar" id="imc-placar">
+      <span class="imc-numero" id="imc-val">—</span>
+      <span class="imc-unidade">kg / m²</span>
+      <span class="classificacao-badge" id="imc-badge"></span>
+    </div>
+
+    <!-- Espectro com segmentos por faixa -->
+    <div class="espectro" id="espectro">
+      <div class="espectro-track">
+        <!-- larguras proporcionais ao intervalo de cada faixa (escala 0–40) -->
+        <div class="seg" id="seg-baixo"  data-faixa="baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
+        <div class="seg" id="seg-normal" data-faixa="normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
+        <div class="seg" id="seg-sobre"  data-faixa="sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
+        <div class="seg" id="seg-ob1"    data-faixa="ob1"    style="background:#FF6B35;color:#FF6B35;width:12.5%"></div>
+        <div class="seg" id="seg-ob2"    data-faixa="ob2"    style="background:#E63946;color:#E63946;width:12.5%"></div>
+        <div class="seg" id="seg-ob3"    data-faixa="ob3"    style="background:#9B1D20;color:#9B1D20;width:12.5%"></div>
+      </div>
+      <div class="espectro-labels">
+        <span class="seg-label" id="lbl-baixo"  style="width:46.25%">Baixo</span>
+        <span class="seg-label" id="lbl-normal" style="width:31.25%">Normal</span>
+        <span class="seg-label" id="lbl-sobre"  style="width:12.5%">Sobre</span>
+        <span class="seg-label" id="lbl-ob1"    style="width:12.5%">Ob. I</span>
+        <span class="seg-label" id="lbl-ob2"    style="width:12.5%">Ob. II</span>
+        <span class="seg-label" id="lbl-ob3"    style="width:12.5%">Ob. III</span>
+      </div>
+    </div>
+
+    <!-- Tabela de referência -->
+    <div class="referencia" id="referencia">
+      <div class="ref-titulo">Tabela de referência — OMS</div>
+      <div class="ref-grid">
+        <div class="ref-linha" data-faixa="baixo">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Abaixo do peso</span>
+          <span class="ref-range">&lt; 18,5</span>
         </div>
-        <div class="header-right">
-          <span class="header-tag">Acesso profissional</span>
-          <button class="btn-voltar" onclick="irCalc()">
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M19 12H5M12 19l-7-7 7-7"/>
-            </svg>
-            Voltar
-          </button>
+        <div class="ref-linha" data-faixa="normal">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Peso normal</span>
+          <span class="ref-range">18,5 – 24,9</span>
         </div>
-      </header>
-
-      <div class="login-center">
-        <div class="login-root">
-
-          <!-- Painel esquerdo -->
-          <div class="panel-left">
-            <div class="left-top">
-              <div class="l-brand">IMC · Plataforma clínica</div>
-              <div class="l-title">Saúde que cabe<br>em <em>números reais</em></div>
-              <p class="l-sub">Avaliação corporal com classificação OMS para uso clínico e pessoal.</p>
-              <div class="l-stat-grid">
-                <div class="l-stat"><span class="l-stat-val">6</span><span class="l-stat-lbl">Faixas OMS</span></div>
-                <div class="l-stat"><span class="l-stat-val">18,5</span><span class="l-stat-lbl">Mín. normal</span></div>
-                <div class="l-stat"><span class="l-stat-val">24,9</span><span class="l-stat-lbl">Máx. normal</span></div>
-                <div class="l-stat"><span class="l-stat-val">2024</span><span class="l-stat-lbl">Referência</span></div>
-              </div>
-            </div>
-            <div class="left-bottom">
-              <button class="pro-btn" id="proBtn" onclick="togglePro()">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <rect x="2" y="7" width="20" height="14" rx="2"/>
-                  <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
-                  <line x1="12" y1="12" x2="12" y2="16"/>
-                  <line x1="10" y1="14" x2="14" y2="14"/>
-                </svg>
-                Acesso Profissional
-                <span class="pro-badge">PRO</span>
-              </button>
-              <div class="features" id="featList" style="display:none">
-                <div class="feat"><span class="feat-check">✓</span>Relatórios clínicos em PDF</div>
-                <div class="feat"><span class="feat-check">✓</span>Histórico de pacientes</div>
-                <div class="feat"><span class="feat-check">✓</span>Exportação de dados CRM</div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Painel direito -->
-          <div class="panel-right">
-            <div class="r-header">
-              <div class="r-title" id="formTitle">Entrar na plataforma</div>
-              <div class="r-sub" id="formSub">Acesso pessoal — sem vínculo profissional</div>
-            </div>
-
-            <div class="l-field">
-              <label class="l-field-lbl" for="l-email">E-mail</label>
-              <div class="l-input-wrap">
-                <span class="l-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/></svg>
-                </span>
-                <input class="l-inp" type="email" id="l-email" placeholder="voce@exemplo.com" autocomplete="email"/>
-              </div>
-            </div>
-
-            <div class="l-field">
-              <label class="l-field-lbl" for="l-senha">Senha</label>
-              <div class="l-input-wrap">
-                <span class="l-icon">
-                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                </span>
-                <input class="l-inp" type="password" id="l-senha" placeholder="••••••••" autocomplete="current-password"/>
-              </div>
-            </div>
-
-            <div class="extra-fields" id="extraFields">
-              <div class="l-field">
-                <label class="l-field-lbl" for="l-crm">CRM / CRN / CRO</label>
-                <div class="l-input-wrap">
-                  <span class="l-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M15 8h2M15 12h2M7 16h10"/></svg>
-                  </span>
-                  <input class="l-inp" type="text" id="l-crm" placeholder="CRM-SP 123456"/>
-                </div>
-              </div>
-              <div class="l-field">
-                <label class="l-field-lbl" for="l-esp">Especialidade</label>
-                <div class="l-select-wrap">
-                  <span class="l-icon">
-                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4.8 2.3A.3.3 0 1 0 5 2H4a2 2 0 0 0-2 2v5a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6V4a2 2 0 0 0-2-2h-1a.2.2 0 1 0 .3.3"/><path d="M8 15v1a6 6 0 0 0 6 6v0a6 6 0 0 0 6-6v-4"/><circle cx="20" cy="10" r="2"/></svg>
-                  </span>
-                  <select class="l-sel" id="l-esp">
-                    <option value="">Selecione…</option>
-                    <option>Clínica geral</option>
-                    <option>Endocrinologia</option>
-                    <option>Nutrição</option>
-                    <option>Medicina do esporte</option>
-                    <option>Cirurgia bariátrica</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <button class="btn-login" onclick="entrar()">
-              Entrar
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-            </button>
-
-            <div class="l-divider">
-              <div class="l-div-line"></div>
-              <span class="l-div-txt">ou continue com</span>
-              <div class="l-div-line"></div>
-            </div>
-
-            <div class="oauth-row">
-              <button class="oauth-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" aria-hidden="true">
-                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-                  <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
-                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
-                </svg>
-                Google
-              </button>
-              <button class="oauth-btn">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
-                Apple
-              </button>
-            </div>
-
-            <div class="l-footer">
-              <button class="l-foot-link">Esqueci a senha</button>
-              <button class="l-foot-link">Criar conta →</button>
-            </div>
-          </div>
-
+        <div class="ref-linha" data-faixa="sobre">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Sobrepeso</span>
+          <span class="ref-range">25,0 – 29,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob1">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau I</span>
+          <span class="ref-range">30,0 – 34,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob2">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau II</span>
+          <span class="ref-range">35,0 – 39,9</span>
+        </div>
+        <div class="ref-linha" data-faixa="ob3">
+          <div class="ref-cor"></div>
+          <span class="ref-nome">Obesidade grau III</span>
+          <span class="ref-range">&ge; 40,0</span>
         </div>
       </div>
     </div>
+
   </div>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer-copy">Classificação OMS · uso profissional e pessoal</span>
+    <div class="footer-dots">
+      <div class="footer-dot" style="background:var(--c-baixo)"></div>
+      <div class="footer-dot" style="background:var(--c-normal)"></div>
+      <div class="footer-dot" style="background:var(--c-sobre)"></div>
+      <div class="footer-dot" style="background:var(--c-ob1)"></div>
+      <div class="footer-dot" style="background:var(--c-ob2)"></div>
+      <div class="footer-dot" style="background:var(--c-ob3)"></div>
+    </div>
+  </footer>
 
 </div>
 
 <script>
-/* ── Navegação entre telas ── */
-function irLogin(){
-  var calc=document.getElementById('tela-calc');
-  var login=document.getElementById('tela-login');
-  calc.classList.remove('visivel');
-  calc.classList.add('oculta');
-  login.classList.remove('oculta');
-  login.classList.add('visivel');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-function irCalc(){
-  var calc=document.getElementById('tela-calc');
-  var login=document.getElementById('tela-login');
-  login.classList.remove('visivel');
-  login.classList.add('oculta');
-  calc.classList.remove('oculta');
-  calc.classList.add('visivel');
-  window.scrollTo({top:0,behavior:'smooth'});
-}
-
-/* ── Calculadora ── */
 var FAIXAS=[
-  {limite:18.5, cor:'#4A9EFF',label:'Abaixo do peso',   faixa:'baixo', bgBadge:'rgba(74,158,255,.15)',  textBadge:'#4A9EFF'},
-  {limite:25,   cor:'#C8F135',label:'Peso normal',       faixa:'normal',bgBadge:'rgba(200,241,53,.15)',  textBadge:'#8FAF1E'},
-  {limite:30,   cor:'#FFB830',label:'Sobrepeso',         faixa:'sobre', bgBadge:'rgba(255,184,48,.15)',  textBadge:'#FFB830'},
-  {limite:35,   cor:'#FF6B35',label:'Obesidade  ·  I',   faixa:'ob1',   bgBadge:'rgba(255,107,53,.15)',  textBadge:'#FF6B35'},
-  {limite:40,   cor:'#E63946',label:'Obesidade  ·  II',  faixa:'ob2',   bgBadge:'rgba(230,57,70,.15)',   textBadge:'#E63946'},
-  {limite:Infinity,cor:'#9B1D20',label:'Obesidade  ·  III',faixa:'ob3', bgBadge:'rgba(155,29,32,.15)',   textBadge:'#C0484C'},
+  {limite:18.5,cor:'#4A9EFF',label:'Abaixo do peso',faixa:'baixo',bgBadge:'rgba(74,158,255,.15)',textBadge:'#4A9EFF'},
+  {limite:25,  cor:'#C8F135',label:'Peso normal',    faixa:'normal',bgBadge:'rgba(200,241,53,.15)',textBadge:'#8FAF1E'},
+  {limite:30,  cor:'#FFB830',label:'Sobrepeso',       faixa:'sobre',bgBadge:'rgba(255,184,48,.15)',textBadge:'#FFB830'},
+  {limite:35,  cor:'#FF6B35',label:'Obesidade  ·  I', faixa:'ob1',  bgBadge:'rgba(255,107,53,.15)',textBadge:'#FF6B35'},
+  {limite:40,  cor:'#E63946',label:'Obesidade  ·  II',faixa:'ob2',  bgBadge:'rgba(230,57,70,.15)', textBadge:'#E63946'},
+  {limite:Infinity,cor:'#9B1D20',label:'Obesidade  ·  III',faixa:'ob3',bgBadge:'rgba(155,29,32,.15)',textBadge:'#C0484C'},
 ];
 
 function calcular(){
   var peso=parseFloat(document.getElementById('peso').value);
   var alturaCm=parseFloat(document.getElementById('altura').value);
-  if(!peso||!alturaCm||peso<=0||alturaCm<=0){sacudir();return;}
+
+  if(!peso||!alturaCm||peso<=0||alturaCm<=0){
+    sacudir();return;
+  }
 
   var alturaM=alturaCm/100;
   var imc=peso/(alturaM*alturaM);
   var f=FAIXAS.find(function(x){return imc<x.limite;});
 
+  // Número
   var elNum=document.getElementById('imc-val');
   elNum.textContent=imc.toFixed(1);
   elNum.style.color=f.cor;
 
+  // Badge
   var elBadge=document.getElementById('imc-badge');
   elBadge.textContent=f.label;
   elBadge.style.background=f.bgBadge;
   elBadge.style.color=f.textBadge;
 
+  // Ativa segmento da faixa correspondente e apaga os demais
   document.querySelectorAll('.seg').forEach(function(s){s.classList.remove('ativo')});
   document.querySelectorAll('.seg-label').forEach(function(s){s.classList.remove('ativo')});
   var segAtivo=document.getElementById('seg-'+f.faixa);
@@ -776,18 +742,33 @@ function calcular(){
   if(segAtivo){segAtivo.classList.add('ativo')}
   if(lblAtivo){lblAtivo.classList.add('ativo');lblAtivo.style.color=f.cor}
 
-  document.querySelectorAll('.ref-linha').forEach(function(l){l.classList.remove('ativa');l.style.background='';});
+  // Linha ativa na tabela — destaca com a cor da faixa
+  document.querySelectorAll('.ref-linha').forEach(function(l){
+    l.classList.remove('ativa');
+    l.style.background='';
+  });
   var la=document.querySelector('.ref-linha[data-faixa="'+f.faixa+'"]');
-  if(la){la.classList.add('ativa');la.style.background=f.bgBadge;}
+  if(la){
+    la.classList.add('ativa');
+    la.style.background=f.bgBadge;
+  }
 
+  // Silhueta ativa
   document.getElementById('silhueta').classList.add('ativa');
-  document.querySelectorAll('.silhueta-svg path,.silhueta-svg circle,.silhueta-svg rect').forEach(function(el){el.style.fill=f.cor;});
+  document.getElementById('silhueta').style.fill=f.cor;
+  document.querySelectorAll('.silhueta-svg path, .silhueta-svg circle, .silhueta-svg rect').forEach(function(el){
+    el.style.fill=f.cor;
+  });
 
+  // Linhas de medida
   var mp=document.getElementById('med-peso');
   var ma=document.getElementById('med-altura');
-  mp.textContent=peso+'kg'; ma.textContent=alturaCm+'cm';
-  mp.classList.add('vis'); ma.classList.add('vis');
+  mp.textContent=peso+'kg';
+  ma.textContent=alturaCm+'cm';
+  mp.classList.add('vis');
+  ma.classList.add('vis');
 
+  // Mostra elementos com fade
   document.getElementById('imc-placar').classList.add('vis');
   document.getElementById('espectro').classList.add('vis');
   document.getElementById('referencia').classList.add('vis');
@@ -795,58 +776,13 @@ function calcular(){
 
 function sacudir(){
   var el=document.querySelector('.form-block');
-  el.style.animation='none';el.offsetHeight;
-  el.style.animation='sacudir .35s ease';
-}
-
-/* ── Login ── */
-var proAtivo=false;
-
-function togglePro(){
-  proAtivo=!proAtivo;
-  var btn=document.getElementById('proBtn');
-  var extras=document.getElementById('extraFields');
-  var feat=document.getElementById('featList');
-  var title=document.getElementById('formTitle');
-  var sub=document.getElementById('formSub');
-  if(proAtivo){
-    btn.classList.add('ativo');
-    extras.classList.add('aberto');
-    feat.style.display='flex';
-    title.textContent='Acesso profissional';
-    sub.textContent='Campos adicionais obrigatórios para profissionais';
-  } else {
-    btn.classList.remove('ativo');
-    extras.classList.remove('aberto');
-    feat.style.display='none';
-    title.textContent='Entrar na plataforma';
-    sub.textContent='Acesso pessoal — sem vínculo profissional';
-  }
-}
-
-function entrar(){
-  var email=document.getElementById('l-email').value.trim();
-  var senha=document.getElementById('l-senha').value;
-  if(!email||!senha){sacudirLogin();return;}
-  if(proAtivo){
-    var crm=document.getElementById('l-crm').value.trim();
-    var esp=document.getElementById('l-esp').value;
-    if(!crm||!esp){sacudirLogin();return;}
-  }
-  alert('Login efetuado'+(proAtivo?' (modo profissional)':'')+'!');
-}
-
-function sacudirLogin(){
-  var el=document.querySelector('.panel-right');
-  el.style.animation='none';el.offsetHeight;
+  el.style.animation='none';
+  el.offsetHeight;
   el.style.animation='sacudir .35s ease';
 }
 
 document.addEventListener('keydown',function(e){
-  if(e.key==='Enter'){
-    var loginVisivel=document.getElementById('tela-login').classList.contains('visivel');
-    if(loginVisivel) entrar(); else calcular();
-  }
+  if(e.key==='Enter')calcular();
 });
 </script>
 </body>
