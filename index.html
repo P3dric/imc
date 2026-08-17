@@ -228,7 +228,7 @@ body{
   font-size:24px;
   font-weight:500;
   color:var(--text);
-  --moz-appearance:textfield;
+  -moz-appearance:textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button{-webkit-appearance:none}
@@ -332,18 +332,25 @@ body{
 }
 
 .silhueta-svg{
-  width:120px;
-  opacity:.18;
-  transition:opacity .4s;
+  width:110px;
+  opacity:.22;
+  transition:opacity .4s, transform .4s;
 }
 
 .silhueta-svg.ativa{
-  opacity:.55;
+  opacity:.6;
+}
+
+.silhueta-svg path,
+.silhueta-svg circle,
+.silhueta-svg rect{
+  fill:var(--muted);
+  transition:fill .3s;
 }
 
 .medida-linha{
   position:absolute;
-  right:calc(50% - 90px);
+  right:calc(50% - 85px);
   display:flex;
   align-items:center;
   gap:6px;
@@ -362,8 +369,8 @@ body{
   background:var(--border);
 }
 
-.medida-peso{top:38%}
-.medida-altura{top:60%}
+.medida-peso{top:30%}
+.medida-altura{top:65%}
 
 /* Placar do IMC */
 .imc-placar{
@@ -433,10 +440,6 @@ body{
   opacity:1;
   height:10px;
   box-shadow:0 0 8px currentColor;
-}
-
-.espectro-pointer{
-  display:none;
 }
 
 .espectro-labels{
@@ -697,93 +700,46 @@ body{
   <!-- Coluna direita -->
   <div class="col-right">
 
-    <!-- Silhueta humana SVG decorativa -->
+    <!-- Silhueta humana SVG, simples e limpa -->
     <div class="silhueta-wrap">
 
       <div class="medida-linha medida-peso" id="med-peso"></div>
       <div class="medida-linha medida-altura" id="med-altura"></div>
 
-      <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 240" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cabeça — formato oval, mais orgânico -->
-        <path d="M50 6 C58.5 6 65 13 65 23 C65 30.5 62 36.5 57.5 40 C56 41.2 55.3 42.5 55.3 44.5 L44.7 44.5 C44.7 42.5 44 41.2 42.5 40 C38 36.5 35 30.5 35 23 C35 13 41.5 6 50 6 Z" fill="#C8F135"/>
+      <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" xmlns="http://www.w3.org/2000/svg">
+        <!-- Cabeça -->
+        <circle cx="50" cy="20" r="16"/>
 
         <!-- Pescoço -->
-        <path d="M44.5 43 L55.5 43 L56.5 52 L43.5 52 Z" fill="#C8F135"/>
+        <rect x="45" y="34" width="10" height="8" rx="2"/>
 
-        <!-- Ombros + tronco (trapézio superior, cintura mais fina) -->
-        <path d="M32 56
-                 C36 52 43 50 50 50
-                 C57 50 64 52 68 56
-                 C71.5 59 73.5 64 73.5 70
-                 C73.5 78 72 86 70 94
-                 C68.5 100 66.5 104 63.5 106.5
-                 C65.5 110 66.5 114 66.5 118
-                 L33.5 118
-                 C33.5 114 34.5 110 36.5 106.5
-                 C33.5 104 31.5 100 30 94
-                 C28 86 26.5 78 26.5 70
-                 C26.5 64 28.5 59 32 56 Z" fill="#C8F135"/>
+        <!-- Tronco -->
+        <path d="M32 46
+                 Q50 40 68 46
+                 L71 104
+                 Q50 112 29 104
+                 Z"/>
 
-        <!-- Braço esquerdo (com leve curva no cotovelo) -->
-        <path d="M32 58
-                 C28 62 24 68 21.5 76
-                 C19.5 83 18.5 90 18 97
-                 C17.8 100 18.5 103 20.5 104.5
-                 C22.5 106 25 105.5 26.5 103.5
-                 C28 101.5 28.5 99 28.8 96.5
-                 C29.5 90 30.8 84 32.8 78
-                 C34.3 73.5 36 68.5 38.5 64
-                 Z" fill="#C8F135"/>
+        <!-- Braço esquerdo -->
+        <rect x="14" y="48" width="12" height="62" rx="6"/>
 
-        <!-- Braço direito (espelhado) -->
-        <path d="M68 58
-                 C72 62 76 68 78.5 76
-                 C80.5 83 81.5 90 82 97
-                 C82.2 100 81.5 103 79.5 104.5
-                 C77.5 106 75 105.5 73.5 103.5
-                 C72 101.5 71.5 99 71.2 96.5
-                 C70.5 90 69.2 84 67.2 78
-                 C65.7 73.5 64 68.5 61.5 64
-                 Z" fill="#C8F135"/>
+        <!-- Braço direito -->
+        <rect x="74" y="48" width="12" height="62" rx="6"/>
 
-        <!-- Quadril / cintura, conecta tronco às pernas -->
-        <path d="M33.5 118
-                 C33.5 122 34.5 126 36 129
-                 L64 129
-                 C65.5 126 66.5 122 66.5 118
-                 Z" fill="#C8F135"/>
+        <!-- Quadril -->
+        <path d="M29 104 Q50 112 71 104 L68 122 Q50 128 32 122 Z"/>
 
-        <!-- Perna esquerda (coxa + canela, levemente afunilada) -->
-        <path d="M36.5 129
-                 C36 138 35.5 148 35 158
-                 C34.6 166 34.3 174 34.6 182
-                 C34.8 187 35.2 192 36 197
-                 C36.4 199.5 37.2 201.5 38.8 202.5
-                 C40.3 203.4 42 203 42.8 201.3
-                 C43.6 199.6 43.7 197.5 43.6 195.5
-                 C43.2 188 42.8 180.5 42.7 173
-                 C42.6 165 43 157 44 149
-                 C44.7 143 45.8 136.5 47 129
-                 Z" fill="#C8F135"/>
+        <!-- Perna esquerda -->
+        <rect x="33" y="122" width="14" height="80" rx="6"/>
 
-        <!-- Perna direita (espelhada) -->
-        <path d="M63.5 129
-                 C64 138 64.5 148 65 158
-                 C65.4 166 65.7 174 65.4 182
-                 C65.2 187 64.8 192 64 197
-                 C63.6 199.5 62.8 201.5 61.2 202.5
-                 C59.7 203.4 58 203 57.2 201.3
-                 C56.4 199.6 56.3 197.5 56.4 195.5
-                 C56.8 188 57.2 180.5 57.3 173
-                 C57.4 165 57 157 56 149
-                 C55.3 143 54.2 136.5 53 129
-                 Z" fill="#C8F135"/>
+        <!-- Perna direita -->
+        <rect x="53" y="122" width="14" height="80" rx="6"/>
 
         <!-- Pé esquerdo -->
-        <path d="M37 200 C36.5 202.5 37 205 39.5 206 C42.5 207.2 47 207 49.5 206 C51 205.4 51.2 204 50 203.2 C47.5 201.6 43.5 200.5 40 200 Z" fill="#C8F135"/>
+        <rect x="30" y="200" width="20" height="9" rx="4"/>
 
         <!-- Pé direito -->
-        <path d="M63 200 C63.5 202.5 63 205 60.5 206 C57.5 207.2 53 207 50.5 206 C49 205.4 48.8 204 50 203.2 C52.5 201.6 56.5 200.5 60 200 Z" fill="#C8F135"/>
+        <rect x="50" y="200" width="20" height="9" rx="4"/>
       </svg>
 
     </div>
@@ -958,9 +914,10 @@ function calcular(){
     la.style.background=f.bgBadge;
   }
 
-  // Silhueta ativa
-  document.getElementById('silhueta').classList.add('ativa');
-  document.querySelectorAll('.silhueta-svg path, .silhueta-svg circle, .silhueta-svg rect').forEach(function(el){
+  // Silhueta ativa — agora só mudamos a cor de preenchimento (fill herdado via CSS)
+  var silhueta=document.getElementById('silhueta');
+  silhueta.classList.add('ativa');
+  silhueta.querySelectorAll('path, circle, rect').forEach(function(el){
     el.style.fill=f.cor;
   });
 
