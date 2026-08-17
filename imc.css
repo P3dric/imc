@@ -48,7 +48,6 @@ body {
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
-  /* Centraliza o shell verticalmente com espaçamento generoso */
   min-height: 100vh;
   display: flex;
   align-items: flex-start;
@@ -65,7 +64,7 @@ body {
   max-width: 480px;
   display: flex;
   flex-direction: column;
-  gap: 0; /* espaçamento gerido internamente por cada seção */
+  gap: 0;
 }
 
 /* ══════════════════════════════════════════════
@@ -77,12 +76,10 @@ body {
   align-items: baseline;
   gap: 10px;
   padding-bottom: 2rem;
-  /* Linha separadora sutil abaixo */
   border-bottom: 1px solid var(--border);
   margin-bottom: 2rem;
 }
 
-/* Sigla "IMC" em destaque com acento */
 .header-marca {
   font-family: var(--font-display);
   font-size: 13px;
@@ -92,7 +89,6 @@ body {
   color: var(--accent);
 }
 
-/* Subtítulo em inglês — referência técnica/internacional */
 .header-sub {
   font-size: 13px;
   color: var(--muted);
@@ -107,7 +103,6 @@ body {
   margin-bottom: 2.5rem;
 }
 
-/* Linha horizontal com os dois inputs e o divisor "/" */
 .inputs-row {
   display: flex;
   align-items: flex-end;
@@ -123,7 +118,6 @@ body {
   gap: 8px;
 }
 
-/* Rótulo do campo */
 .field-label {
   font-family: var(--font-display);
   font-size: 11px;
@@ -133,7 +127,6 @@ body {
   color: var(--muted);
 }
 
-/* Wrapper do input + unidade */
 .input-wrap {
   display: flex;
   align-items: center;
@@ -143,12 +136,10 @@ body {
   transition: border-color 0.2s;
 }
 
-/* Borda acesa ao focar qualquer input dentro do wrapper */
 .input-wrap:focus-within {
   border-color: var(--accent);
 }
 
-/* Input em si — sem border própria */
 .field-input {
   flex: 1;
   min-width: 0;
@@ -162,14 +153,13 @@ body {
   font-weight: 500;
   color: var(--text);
   /* Remove setas nativas de input[type=number] */
-  -moz-animation: textfield;
+  --moz-appearance: textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button {
   -webkit-appearance: none;
 }
 
-/* Unidade (kg / cm) à direita do input */
 .unit {
   padding: 0 12px 0 4px;
   font-size: 12px;
@@ -179,12 +169,52 @@ body {
   flex-shrink: 0;
 }
 
-/* Divisor "/" entre os campos */
 .field-divider {
   font-size: 24px;
   color: var(--border);
   padding-bottom: 12px;
   flex-shrink: 0;
+}
+
+/* ── Seletor de sexo biológico ── */
+.genero-wrap {
+  display: flex;
+  gap: 8px;
+}
+
+.genero-btn {
+  flex: 1;
+  height: 44px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  color: var(--muted);
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: border-color 0.2s, color 0.2s, background 0.2s;
+}
+
+.genero-btn:hover {
+  color: var(--text);
+}
+
+/* Estado selecionado — usa o acento da marca */
+.genero-btn.ativo {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: rgba(200, 241, 53, 0.06);
+}
+
+.genero-icone {
+  font-size: 14px;
 }
 
 /* ── Botão calcular ── */
@@ -196,7 +226,7 @@ body {
   justify-content: center;
   gap: 8px;
   background: var(--accent);
-  color: #0D0D0D; /* texto escuro sobre fundo claro */
+  color: #0D0D0D;
   border: none;
   border-radius: 4px;
   font-family: var(--font-display);
@@ -211,7 +241,6 @@ body {
 .btn-calcular:hover  { opacity: 0.88; }
 .btn-calcular:active { transform: scale(0.98); }
 
-/* Seta decorativa no botão */
 .btn-arrow {
   font-size: 16px;
   transition: transform 0.2s;
@@ -224,7 +253,6 @@ body {
    SEÇÃO DE RESULTADO
    ══════════════════════════════════════════════ */
 
-/* Oculto até o cálculo ser feito */
 .resultado {
   display: none;
   flex-direction: column;
@@ -234,7 +262,6 @@ body {
   animation: fadeIn 0.35s ease;
 }
 
-/* Anima a entrada do resultado */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(6px); }
   to   { opacity: 1; transform: translateY(0); }
@@ -247,17 +274,14 @@ body {
   gap: 10px;
 }
 
-/* Número principal — ocupa quase toda a largura */
 .imc-numero {
   font-family: var(--font-display);
-  font-size: clamp(64px, 18vw, 96px); /* responsivo */
+  font-size: clamp(64px, 18vw, 96px);
   font-weight: 700;
   line-height: 1;
   letter-spacing: -0.03em;
-  /* Cor definida pelo JS conforme a faixa */
 }
 
-/* Unidade ao lado do número */
 .imc-unidade {
   font-size: 13px;
   color: var(--muted);
@@ -278,7 +302,6 @@ body {
   text-transform: uppercase;
   padding: 5px 14px;
   border-radius: 2px;
-  /* Fundo e cor definidos pelo JS */
 }
 
 /* ── Espectro / barra de faixas ── */
@@ -288,12 +311,10 @@ body {
   gap: 8px;
 }
 
-/* Trilha de fundo da barra */
 .espectro-track {
   position: relative;
   height: 6px;
   border-radius: 3px;
-  /* Gradiente de 4 faixas horizontais */
   background: linear-gradient(
     to right,
     var(--c-baixo)  0%   25%,
@@ -303,15 +324,13 @@ body {
     var(--c-ob2)    75%  87.5%,
     var(--c-ob3)    87.5% 100%
   );
-  overflow: visible; /* permite o ponteiro sair da trilha */
+  overflow: visible;
 }
 
-/* Preenchimento animado (não usado aqui, mantido para variações) */
 .espectro-fill {
   display: none;
 }
 
-/* Ponteiro triangular na posição do IMC */
 .espectro-pointer {
   position: absolute;
   top: -5px;
@@ -319,12 +338,10 @@ body {
   height: 16px;
   background: var(--text);
   border-radius: 1px;
-  /* Posição left definida pelo JS */
   transform: translateX(-50%);
   transition: left 0.45s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Rótulos das faixas */
 .espectro-labels {
   display: flex;
   justify-content: space-between;
@@ -341,7 +358,6 @@ body {
   overflow: hidden;
 }
 
-/* Cabeçalho da tabela */
 .ref-titulo {
   font-family: var(--font-display);
   font-size: 10px;
@@ -354,13 +370,11 @@ body {
   background: var(--surface);
 }
 
-/* Grid interno */
 .ref-grid {
   display: flex;
   flex-direction: column;
 }
 
-/* Cada linha da tabela */
 .ref-linha {
   display: flex;
   align-items: center;
@@ -373,12 +387,10 @@ body {
   border-bottom: none;
 }
 
-/* Linha destacada quando é a faixa atual do usuário */
 .ref-linha.ativa {
-  background: rgba(200, 241, 53, 0.06); /* leve tint do acento */
+  background: rgba(200, 241, 53, 0.06);
 }
 
-/* Quadrado colorido de identificação da faixa */
 .ref-cor {
   width: 8px;
   height: 8px;
@@ -386,7 +398,6 @@ body {
   flex-shrink: 0;
 }
 
-/* Cores de cada quadrado por faixa */
 .ref-linha[data-faixa="baixo"]  .ref-cor { background: var(--c-baixo); }
 .ref-linha[data-faixa="normal"] .ref-cor { background: var(--c-normal); }
 .ref-linha[data-faixa="sobre"]  .ref-cor { background: var(--c-sobre); }
@@ -394,19 +405,78 @@ body {
 .ref-linha[data-faixa="ob2"]    .ref-cor { background: var(--c-ob2); }
 .ref-linha[data-faixa="ob3"]    .ref-cor { background: var(--c-ob3); }
 
-/* Nome da classificação */
 .ref-nome {
   flex: 1;
   font-size: 13px;
   color: var(--text);
 }
 
-/* Intervalo numérico — alinhado à direita */
 .ref-range {
   font-family: var(--font-display);
   font-size: 12px;
   color: var(--muted);
   letter-spacing: 0.04em;
+}
+
+/* ── Card de peso ideal por sexo ── */
+.peso-ideal {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.pi-titulo {
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.pi-corpo {
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.pi-linha {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+
+.pi-linha .pi-nome {
+  color: var(--muted);
+}
+
+.pi-linha .pi-valor {
+  font-family: var(--font-display);
+  font-weight: 700;
+  color: var(--text);
+  transition: color 0.2s;
+}
+
+.pi-diferenca {
+  margin-top: 2px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 11px;
+  color: var(--muted);
+}
+
+.pi-diferenca .pi-diff-valor {
+  font-family: var(--font-display);
+  color: var(--accent);
+  font-weight: 700;
 }
 
 /* ══════════════════════════════════════════════
@@ -431,6 +501,8 @@ body {
   .inputs-row { gap: 0.5rem; }
 
   .field-input { font-size: 18px; height: 44px; }
+
+  .genero-btn { font-size: 10px; }
 }
 
 /* ══════════════════════════════════════════════
