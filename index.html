@@ -47,7 +47,6 @@ body{
   background-size:40px 40px;
 }
 
-/* Brilho central sutil */
 .bg-glow{
   position:fixed;
   top:-120px;
@@ -130,7 +129,6 @@ body{
   gap:2.5rem;
 }
 
-/* Intro text */
 .intro-label{
   font-size:11px;
   font-weight:500;
@@ -152,7 +150,6 @@ body{
   font-style:normal;
 }
 
-/* Bloco de métricas rápidas */
 .stats-row{
   display:grid;
   grid-template-columns:1fr 1fr 1fr;
@@ -231,7 +228,7 @@ body{
   font-size:24px;
   font-weight:500;
   color:var(--text);
-  moz-appearance:textfield;
+  -moz-appearance:textfield;
 }
 .field-input::-webkit-outer-spin-button,
 .field-input::-webkit-inner-spin-button{-webkit-appearance:none}
@@ -244,6 +241,46 @@ body{
   color:var(--muted);
   letter-spacing:.06em;
   flex-shrink:0;
+}
+
+/* ── Seletor de sexo biológico ── */
+.genero-wrap{
+  display:flex;
+  gap:8px;
+}
+
+.genero-btn{
+  flex:1;
+  height:44px;
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:4px;
+  color:var(--muted);
+  font-family:'Space Grotesk',sans-serif;
+  font-size:12px;
+  font-weight:700;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  transition:border-color .2s, color .2s, background .2s;
+}
+
+.genero-btn:hover{
+  color:var(--text);
+}
+
+.genero-btn.ativo{
+  border-color:var(--accent);
+  color:var(--accent);
+  background:rgba(200,241,53,.06);
+}
+
+.genero-icone{
+  font-size:14px;
 }
 
 .btn-calcular{
@@ -287,7 +324,6 @@ body{
   position:relative;
 }
 
-/* Silhueta SVG do corpo humano */
 .silhueta-wrap{
   position:relative;
   width:100%;
@@ -305,7 +341,6 @@ body{
   opacity:.55;
 }
 
-/* Linhas de medida decorativas ao lado da silhueta */
 .medida-linha{
   position:absolute;
   right:calc(50% - 90px);
@@ -386,7 +421,6 @@ body{
   overflow:visible;
 }
 
-/* Cada segmento da barra representa uma faixa */
 .seg{
   height:5px;
   border-radius:3px;
@@ -395,7 +429,6 @@ body{
   flex-shrink:0;
 }
 
-/* Segmento ativo: mais alto, opaco e com brilho */
 .seg.ativo{
   opacity:1;
   height:10px;
@@ -403,7 +436,7 @@ body{
 }
 
 .espectro-pointer{
-  display:none; /* substituído pelos segmentos */
+  display:none;
 }
 
 .espectro-labels{
@@ -415,7 +448,6 @@ body{
   text-transform:uppercase;
 }
 
-/* Cada label alinha com seu segmento */
 .seg-label{
   text-align:center;
   transition:color .3s;
@@ -470,6 +502,67 @@ body{
 .ref-nome{flex:1;font-size:12px;color:var(--text)}
 .ref-range{font-size:11px;color:var(--muted);letter-spacing:.04em}
 
+/* Card de peso ideal por sexo */
+.peso-ideal{
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:4px;
+  overflow:hidden;
+  opacity:0;
+  transition:opacity .4s .3s;
+}
+.peso-ideal.vis{opacity:1}
+
+.pi-titulo{
+  font-size:9px;
+  font-weight:700;
+  letter-spacing:.16em;
+  text-transform:uppercase;
+  color:var(--muted);
+  padding:8px 12px;
+  border-bottom:1px solid var(--border);
+  background:var(--surface);
+}
+
+.pi-corpo{
+  padding:12px;
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.pi-linha{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:12px;
+}
+
+.pi-linha .pi-nome{
+  color:var(--muted);
+}
+
+.pi-linha .pi-valor{
+  font-weight:700;
+  color:var(--text);
+}
+
+.pi-diferenca{
+  margin-top:2px;
+  padding-top:8px;
+  border-top:1px solid var(--border);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  font-size:11px;
+  color:var(--muted);
+}
+
+.pi-diferenca .pi-diff-valor{
+  color:var(--accent);
+  font-weight:700;
+}
+
 /* ── Footer ── */
 .footer{
   grid-area:footer;
@@ -497,7 +590,6 @@ body{
   background:var(--border);
 }
 
-/* Animação de sacudida para inputs inválidos */
 @keyframes sacudir{
   0%,100%{transform:translateX(0)}
   25%{transform:translateX(-6px)}
@@ -582,6 +674,18 @@ body{
         </div>
       </div>
 
+      <div class="field">
+        <span class="field-label">Sexo biológico</span>
+        <div class="genero-wrap">
+          <button type="button" class="genero-btn ativo" id="btn-masc" onclick="selecionarGenero('masc')">
+            <span class="genero-icone">♂</span> Masculino
+          </button>
+          <button type="button" class="genero-btn" id="btn-fem" onclick="selecionarGenero('fem')">
+            <span class="genero-icone">♀</span> Feminino
+          </button>
+        </div>
+      </div>
+
       <button class="btn-calcular" onclick="calcular()">
         Calcular IMC
         <span class="btn-arrow" aria-hidden="true">→</span>
@@ -596,24 +700,16 @@ body{
     <!-- Silhueta humana SVG decorativa -->
     <div class="silhueta-wrap">
 
-      <!-- Linhas de medida -->
       <div class="medida-linha medida-peso" id="med-peso"></div>
       <div class="medida-linha medida-altura" id="med-altura"></div>
 
       <svg class="silhueta-svg" id="silhueta" viewBox="0 0 100 220" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- Cabeça -->
         <circle cx="50" cy="22" r="14" fill="#C8F135"/>
-        <!-- Pescoço -->
         <rect x="45" y="35" width="10" height="10" rx="2" fill="#C8F135"/>
-        <!-- Torso -->
         <path d="M28 46 C28 44 34 42 50 42 C66 42 72 44 72 46 L76 110 C76 112 74 114 72 114 L28 114 C26 114 24 112 24 110 Z" fill="#C8F135"/>
-        <!-- Braço esquerdo -->
         <path d="M28 50 L14 90 C13 93 14 96 16 97 L20 98 L30 60 Z" fill="#C8F135"/>
-        <!-- Braço direito -->
         <path d="M72 50 L86 90 C87 93 86 96 84 97 L80 98 L70 60 Z" fill="#C8F135"/>
-        <!-- Perna esquerda -->
         <path d="M34 114 L28 190 C27.5 193 29 196 31 197 L36 198 L44 118 Z" fill="#C8F135"/>
-        <!-- Perna direita -->
         <path d="M66 114 L72 190 C72.5 193 71 196 69 197 L64 198 L56 118 Z" fill="#C8F135"/>
       </svg>
 
@@ -629,7 +725,6 @@ body{
     <!-- Espectro com segmentos por faixa -->
     <div class="espectro" id="espectro">
       <div class="espectro-track">
-        <!-- larguras proporcionais ao intervalo de cada faixa (escala 0–40) -->
         <div class="seg" id="seg-baixo"  data-faixa="baixo"  style="background:#4A9EFF;color:#4A9EFF;width:46.25%"></div>
         <div class="seg" id="seg-normal" data-faixa="normal" style="background:#C8F135;color:#C8F135;width:31.25%"></div>
         <div class="seg" id="seg-sobre"  data-faixa="sobre"  style="background:#FFB830;color:#FFB830;width:12.5%"></div>
@@ -644,6 +739,25 @@ body{
         <span class="seg-label" id="lbl-ob1"    style="width:12.5%">Ob. I</span>
         <span class="seg-label" id="lbl-ob2"    style="width:12.5%">Ob. II</span>
         <span class="seg-label" id="lbl-ob3"    style="width:12.5%">Ob. III</span>
+      </div>
+    </div>
+
+    <!-- Card de peso ideal / diferença por sexo -->
+    <div class="peso-ideal" id="peso-ideal">
+      <div class="pi-titulo">Peso ideal estimado — fórmula de Devine</div>
+      <div class="pi-corpo">
+        <div class="pi-linha">
+          <span class="pi-nome">♂ Masculino</span>
+          <span class="pi-valor" id="pi-masc">—</span>
+        </div>
+        <div class="pi-linha">
+          <span class="pi-nome">♀ Feminino</span>
+          <span class="pi-valor" id="pi-fem">—</span>
+        </div>
+        <div class="pi-diferenca">
+          <span>Diferença entre sexos, mesma altura</span>
+          <span class="pi-diff-valor" id="pi-diff">—</span>
+        </div>
       </div>
     </div>
 
@@ -711,6 +825,24 @@ var FAIXAS=[
   {limite:Infinity,cor:'#9B1D20',label:'Obesidade  ·  III',faixa:'ob3',bgBadge:'rgba(155,29,32,.15)',textBadge:'#C0484C'},
 ];
 
+var generoAtual='masc';
+
+function selecionarGenero(g){
+  generoAtual=g;
+  document.getElementById('btn-masc').classList.toggle('ativo', g==='masc');
+  document.getElementById('btn-fem').classList.toggle('ativo', g==='fem');
+}
+
+/* Fórmula de Devine — peso ideal em kg a partir da altura em cm */
+function pesoIdealDevine(alturaCm, genero){
+  var alturaPol=alturaCm/2.54; // cm -> polegadas
+  var polegadasAcimaDe5pes=Math.max(0, alturaPol-60); // 5 pés = 60 polegadas
+  if(genero==='masc'){
+    return 50+2.3*polegadasAcimaDe5pes;
+  }
+  return 45.5+2.3*polegadasAcimaDe5pes;
+}
+
 function calcular(){
   var peso=parseFloat(document.getElementById('peso').value);
   var alturaCm=parseFloat(document.getElementById('altura').value);
@@ -755,7 +887,6 @@ function calcular(){
 
   // Silhueta ativa
   document.getElementById('silhueta').classList.add('ativa');
-  document.getElementById('silhueta').style.fill=f.cor;
   document.querySelectorAll('.silhueta-svg path, .silhueta-svg circle, .silhueta-svg rect').forEach(function(el){
     el.style.fill=f.cor;
   });
@@ -768,10 +899,24 @@ function calcular(){
   mp.classList.add('vis');
   ma.classList.add('vis');
 
+  // Peso ideal por sexo (fórmula de Devine) e diferença entre eles
+  var idealMasc=pesoIdealDevine(alturaCm,'masc');
+  var idealFem=pesoIdealDevine(alturaCm,'fem');
+  var diff=idealMasc-idealFem;
+
+  document.getElementById('pi-masc').textContent=idealMasc.toFixed(1)+' kg';
+  document.getElementById('pi-fem').textContent=idealFem.toFixed(1)+' kg';
+  document.getElementById('pi-diff').textContent='+'+diff.toFixed(1)+' kg (masc.)';
+
+  // Destaca a linha do sexo selecionado
+  document.getElementById('pi-masc').style.color = generoAtual==='masc' ? '#C8F135' : '';
+  document.getElementById('pi-fem').style.color  = generoAtual==='fem'  ? '#C8F135' : '';
+
   // Mostra elementos com fade
   document.getElementById('imc-placar').classList.add('vis');
   document.getElementById('espectro').classList.add('vis');
   document.getElementById('referencia').classList.add('vis');
+  document.getElementById('peso-ideal').classList.add('vis');
 }
 
 function sacudir(){
